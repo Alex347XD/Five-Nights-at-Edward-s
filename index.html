@@ -85,74 +85,34 @@
         <h1>Five Nights at Edward's</h1>
         <p>
             Welcome to <strong>Five Nights at Edward's</strong>.
-            Download the latest version of the game or play it directly on Game Jolt.
+            Download the latest version of the game.
         </p>
 
         <div class="buttons">
-            <!-- Game Jolt Widget -->
-            <iframe
-                src="https://gamejolt.com/dashboard/games/1034308/packages/1047539/widget"
-                width="100%"
-                height="245"
-                frameborder="0"
-                scrolling="no"
-            ></iframe>
+            <!-- Direct links -->
+            <a class="button play" href="play.html">▶ Play Now</a>
 
-            <!-- Direct links as fallback -->
-            <a
-                class="button play"
-                href="play.html"
-            >
-                ▶ Play Now
-            </a>
-
-            <a
-                class="button download"
-                href="https://gamejolt.com/games/1034308"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                ⬇ Download (PC)
-            </a>
-
-            <a
-                class="button download"
-                href="https://gamejolt.com/games/1034308"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                📱 Download for Android
-            </a>
-
-            <a
-                class="button download"
-                href="https://gamejolt.com/games/1034308"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                🍎 Download for iOS
-            </a>
+            <a class="button download" href="https://gamejolt.com/get/build?game=1034308&build=1886212" target="_blank" rel="noopener noreferrer">⬇ Download (PC)</a>
+            <a class="button download" href="https://gamejolt.com/get/build?game=1034308&build=1887792" target="_blank" rel="noopener noreferrer">📱 Download for Android</a>
+            <a class="button download" href="https://gamejolt.com/get/build?game=1034308&build=1886343" target="_blank" rel="noopener noreferrer">🍎 Download for iOS</a>
         </div>
 
         <footer>
-            © 2026 Five Nights at Edward's • Fan-made horror game
+            © 2026 Edward's Province • Fan-made FNaF game
         </footer>
     </div>
+
     <script>
         function highlightPlatform() {
             const ua = navigator.userAgent;
-
             const isAndroid = /Android/i.test(ua);
             const isIOS = /iPhone|iPad|iPod/i.test(ua);
-
             const buttons = document.querySelectorAll('.button.download');
 
             buttons.forEach(btn => {
-                if (
-                    (isAndroid && btn.textContent.includes('Android')) ||
+                if ((isAndroid && btn.textContent.includes('Android')) ||
                     (isIOS && btn.textContent.includes('iOS')) ||
-                    (!isAndroid && !isIOS && btn.textContent.includes('PC'))
-                ) {
+                    (!isAndroid && !isIOS && btn.textContent.includes('PC'))) {
                     btn.style.border = '2px solid #b00000';
                     btn.style.boxShadow = '0 0 12px rgba(176, 0, 0, 0.8)';
                 }
