@@ -1,111 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black" />
-<meta name="HandheldFriendly" content="true" />
-<title>Five Nights at Edward's</title>
-
-<style type="text/css">
-  h1 { font-family: Arial, Helvetica, sans-serif; color: #F00; font-size: x-large; }
-  p { font-family: Arial, Helvetica, sans-serif; color: #000; font-size: small; }
-  body { background-color: #FFF; text-align: center; margin: 0; padding: 0; }
-  #bloctxt { border-left-width: 5px; border-left-style: solid; border-left-color: #F00; padding-left: 10px; position: absolute; left: 50%; width: 600px; margin-left: -260px }
-
-  /* Buttons */
-  .control-btn { position: fixed; bottom: 20px; padding: 12px 16px; font-family: Arial, Helvetica, sans-serif; font-weight: bold; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; z-index: 9999; transition: opacity 0.4s ease; }
-  #fullscreenBtn { right: 20px; background: rgba(176,0,0,0.85); color: #fff; }
-  #menuBtn { left: 20px; background: rgba(40,40,40,0.9); color: #fff; border: 1px solid #666; }
-  .hidden-ui { opacity: 0; pointer-events: none; }
-</style>
-
-<!-- Clickteam HTML5 runtime -->
-<script src="src/Runtime.js"></script>
-
 <script>
-    if (!document.createElement("canvas").getContext) {
-        window.open("http://www.clickteam.com/html5-fallback", "_self");
+window.addEventListener("load", windowLoaded, false);
+
+function windowLoaded() {
+    new Runtime("MMFCanvas", "resources/Five Nights at Edward's.cch");
+}
+
+// Buttons
+const fullscreenBtn = document.getElementById("fullscreenBtn");
+const menuBtn = document.getElementById("menuBtn");
+
+// Fullscreen toggle with dynamic button text
+function toggleFullscreen() {
+    const canvas = document.getElementById("MMFCanvas");
+
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        // Enter fullscreen
+        if (canvas.requestFullscreen) canvas.requestFullscreen();
+        else if (canvas.webkitRequestFullscreen) canvas.webkitRequestFullscreen();
+        fullscreenBtn.textContent = "❎ Exit Fullscreen";
+    } else {
+        // Exit fullscreen
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        fullscreenBtn.textContent = "⛶ Full Screen";
     }
+}
 
-    // Detect local file protocol
-    if (window.location.protocol == "file:") {
-        document.write('<div id="bloctxt">');
-        document.write('<h1>The application cannot be run...</h1>');
-        document.write('<p>HTML browsers do not allow you to launch data files directly from the file system.<br>');
-        document.write('Please use the Build & Run option (it opens a local web server) to run your application,<br>');
-        document.write('or upload your application folder to a remote web-server, and start it from there...</p>');
-        document.write('</div>');
-        throw new Error("Cannot run application");
+// Ensure button text updates if fullscreen changes outside button click
+document.addEventListener("fullscreenchange", updateFullscreenText);
+document.addEventListener("webkitfullscreenchange", updateFullscreenText);
+
+function updateFullscreenText() {
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+        fullscreenBtn.textContent = "❎ Exit Fullscreen";
+    } else {
+        fullscreenBtn.textContent = "⛶ Full Screen";
     }
-</script>
-</head>
-<body>
+}
 
-<div style="display: inline-block; -webkit-user-select: none; text-align: left;">
-    <canvas id="MMFCanvas" width="1280" height="720">Your browser does not support Canvas.</canvas>
-</div>
+// Go back to menu
+function goToMenu() {
+    window.location.href = "index.html";
+}
 
-<!-- Buttons -->
-<button id="menuBtn" class="control-btn" onclick="goToMenu()">⬅ Back to Menu</button>
-<button id="fullscreenBtn" class="control-btn" onclick="toggleFullscreen()">⛶ Full Screen</button>
+// Auto-hide UI buttons
+const EDGE_ZONE = 100;
 
-<script>
-    // Runtime start
-    window.addEventListener("load", windowLoaded, false);
-    function windowLoaded() {
-        new Runtime("MMFCanvas", "resources/Five Nights at Edward's.cch");
-    }
+fullscreenBtn.classList.add("hidden-ui");
+menuBtn.classList.add("hidden-ui");
 
-    // Fullscreen & Menu functions
-    function toggleFullscreen() {
-        const canvas = document.getElementById("MMFCanvas");
-        if (!document.fullscreenElement) {
-            if (canvas.requestFullscreen) canvas.requestFullscreen();
-            else if (canvas.webkitRequestFullscreen) canvas.webkitRequestFullscreen();
-        } else {
-            if (document.exitFullscreen) document.exitFullscreen();
-            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        }
-    }
+function showUI() {
+    fullscreenBtn.classList.remove("hidden-ui");
+    menuBtn.classList.remove("hidden-ui");
+}
 
-    function goToMenu() {
-        window.location.href = "index.html";
-    }
-
-    // Auto-hide UI buttons
-    const EDGE_ZONE = 100;
-    const fullscreenBtn = document.getElementById("fullscreenBtn");
-    const menuBtn = document.getElementById("menuBtn");
-
+function hideUI() {
     fullscreenBtn.classList.add("hidden-ui");
     menuBtn.classList.add("hidden-ui");
+}
 
-    function showUI() {
-        fullscreenBtn.classList.remove("hidden-ui");
-        menuBtn.classList.remove("hidden-ui");
-    }
-
-    function hideUI() {
-        fullscreenBtn.classList.add("hidden-ui");
-        menuBtn.classList.add("hidden-ui");
-    }
-
-    document.addEventListener("mousemove", (e) => {
-        const y = e.clientY;
-        if (y <= EDGE_ZONE || y >= window.innerHeight - EDGE_ZONE) {
-            showUI();
-        } else {
-            hideUI();
-        }
-    });
-
-    document.addEventListener("touchstart", () => {
+document.addEventListener("mousemove", (e) => {
+    const y = e.clientY;
+    if (y <= EDGE_ZONE || y >= window.innerHeight - EDGE_ZONE) {
         showUI();
-        setTimeout(hideUI, 2000);
-    });
-</script>
+    } else {
+        hideUI();
+    }
+});
 
-</body>
-</html>
+document.addEventListener("touchstart", () => {
+    showUI();
+    setTimeout(hideUI, 2000);
+});
+</script>
