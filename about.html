@@ -658,9 +658,9 @@ let currentAlert = null;
 
 function showAlert(alert){
     resolveBox.style.opacity = 1;
-    popup.style.opacity = 1;
     typingPaused = true;
     currentAlert = alert; // save for when button clicked
+    popup.style.opacity = 1; 
 
     popupText.innerText = alert.text;
     resolveBox.innerText = alert.resolve; // button text is alert.resolve
@@ -761,16 +761,24 @@ function startResolve(alert){
             resolveBox.style.animation = "resolvePulse 0.6s infinite alternate";
 
             // 🔹 WAIT BEFORE HIDING EVERYTHING
-            setTimeout(() => {
-                barContainer.remove();
-                popup.style.top = "-120px";
-                flashOverlay.style.opacity = 0;
-                resolveBox.style.animation = "none";
-                resolveBox.style.opacity = 0;
-		popup.style.opacity = 0;
+            barContainer.remove();
 
-                typingPaused = false; // resume typing AFTER delay
-            }, 800); // ← delay after bar completes
+	    // start hide animation
+	   popup.style.top = "-120px";
+	   flashOverlay.style.opacity = 0;
+
+	   // wait for animation to finish
+	   popup.addEventListener("transitionend", function onHide(e) {
+   	       if (e.propertyName !== "top") return;
+
+    	       popup.removeEventListener("transitionend", onHide);
+
+	       popup.style.opacity = 0;
+               resolveBox.style.animation = "none";
+               resolveBox.style.opacity = 0;
+
+               typingPaused = false; // resume typing AFTER popup is gone
+            });
         }
     }, 50 + Math.random() * 50);
 }
