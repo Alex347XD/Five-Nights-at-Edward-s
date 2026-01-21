@@ -102,14 +102,12 @@ body {
     text-shadow: 0 0 6px #FF0000, 0 0 12px #FF0000, 0 0 20px #FF4C4C;
 }
 
-/* Pulsing glow animation */
 @keyframes pulseGlow {
     0% { box-shadow: 0 0 6px #FF0000, 0 0 10px #FF0000; }
     50% { box-shadow: 0 0 12px #FF4C4C, 0 0 20px #FF4C4C; }
     100% { box-shadow: 0 0 6px #FF0000, 0 0 10px #FF0000; }
 }
 
-/* GLITCH EFFECT */
 @keyframes glitch {
     0% { text-shadow: 2px 0 red; }
     20% { text-shadow: -2px 0 cyan; }
@@ -117,6 +115,7 @@ body {
     60% { text-shadow: -1px 0 red; }
     100% { text-shadow: none; }
 }
+
 .corrupt {
     color: #ff3c3c;
     text-shadow: 0 0 6px red;
@@ -136,8 +135,8 @@ body {
     51%, 100% { opacity: 0; }
 }
 
-/* BACK & SKIP BUTTON */
-.back {
+/* BACK & SKIP & NEXT BUTTONS */
+.back, #nextNight {
     display: inline-block;
     margin-top: 25px;
     margin-right: 10px;
@@ -145,8 +144,9 @@ body {
     border: 1px solid #555;
     color: #fff;
     text-decoration: none;
+    cursor: pointer;
 }
-.back:hover {
+.back:hover, #nextNight:hover {
     background: #5b1b1b;
 }
 
@@ -165,9 +165,23 @@ body {
     z-index: 9999;
     text-align: center;
 }
+
+/* MUTE BUTTON */
+#muteButton {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #111;
+    border: 1px solid #555;
+    padding: 10px;
+    color: #fff;
+    cursor: pointer;
+}
+#muteButton:hover {
+    background: #5b1b1b;
+}
 </style>
 </head>
-
 <body>
 
 <div class="log-container" id="screen">
@@ -175,25 +189,32 @@ body {
     <div class="log" id="logText"></div>
     <a href="index.html" class="back">← RETURN TO MAIN MENU</a>
     <a href="#" class="back" id="skipButton">SKIP LOG →</a>
+    <a id="nextNight" class="back" style="display:none;">NEXT NIGHT →</a>
 </div>
 
-<!-- CLICK TO START OVERLAY -->
 <div id="startOverlay">CLICK TO START NIGHT SHIFT</div>
+<button id="muteButton">Mute</button>
 
 <!-- AUDIO -->
 <audio id="typeSound" src="resources/type.mp3" preload="auto"></audio>
 <audio id="glitchSound" src="resources/glitch.mp3" preload="auto"></audio>
 
 <script>
-/* ---------------- CONFIG ---------------- */
-let NIGHT = Math.floor(Math.random() * 5) + 1;
+// ---------------- CONFIG ----------------
+let NIGHT = 1;
+const maxNight = 5;
 const baseSpeed = 120;
-const speed = baseSpeed - NIGHT * 5;
+let speed = baseSpeed - NIGHT*5;
 const BASE_ALERT_CHANCE = 0.004;
 const BASE_CORRUPTION_CHANCE = 0.05;
-const ALERT_UNLOCK_INDEX = 550;
+const ALERT_UNLOCK_INDEX = 50; // smaller for demo
 
-const logContent = `Security Log 1 — Edward’s Theme Park
+let muted = false;
+
+// Replace with your actual log text per night
+const logContent = [
+"", // index 0 not used
+`Security Log Night 1 — Edward’s Theme Park
 STATUS: ABANDONED
 POWER GRID: PARTIALLY OFFLINE
 ACCESS LEVEL: NIGHT SECURITY ONLY
@@ -207,9 +228,9 @@ The park has been closed for <span class="redacted">█████████�
 No caretakers.
 No official power source.
 
-Camera feeds activate despite <span class="redacted">██████████████</span>.
-Motion sensors trigger in sealed zones.
-Visual anomalies detected when zooming feeds.
+Cameras flicker despite corroded wiring.
+Motion sensors trigger in areas where nothing should be moving.
+Occasional shapes appear in the dark, vanishing when zoomed in.
 
 THIS LOCATION IS NOT EMPTY.
 
@@ -218,75 +239,291 @@ KNOWN ANIMATRONIC ENTITIES
 ------------------------------------------------------------
 
 ENTITY: EDWARD THE DEVIL
-Behavior classified as <span class="redacted">██████████</span>.
-Monitoring ineffective.
+The park’s original star. Moves relentlessly toward the office even if monitored.
+Behavior is unpredictable; careful planning is essential.
 
 ENTITY: NOMNOM THE DINO
-Movement logic <span class="redacted">████████</span>.
+Bright blue, permanently hungry, sensors glitchy and erratic.
+Moves toward activity or sound, monitoring only gives slight warnings.
 
 ENTITY: BIG THE BOULDER
-Camera-only entity.
-Power drain <span class="redacted">██████████</span>.
+Stone-themed animatronic from the mountain zone.
+Appears only on cameras and drains office power. Ignoring him leaves you powerless.
 
 ENTITY: SMILEY
-Threat level <span class="redacted">████</span> (INDIRECT).
+Mischievous clown from the funhouse zone.
+Never harms the player but jump-scares cameras, temporarily disabling feeds.
 
 ENTITY: SHINY EDWARD
-Audio diversion <span class="redacted">████████</span> required.
+Unfinished bright blue-green variant.
+Wanders unpredictably; must be lured with audio cues to prevent approach.
 
 ENTITY: SOY SAUCE EDWARD
-Mask compliance <span class="redacted">██████████</span>.
+Promotional food-themed variant.
+Appears silently in the office; wearing the mask keeps him passive.
 
 ENTITY: BUSINESS EDWARD
-Payment meter <span class="redacted">████████████</span>.
+Corporate-themed Edward variant with briefcase.
+Requires a constant payment flow to remain passive; neglect triggers aggression.
 
 END OF NIGHT LOG
-LOGGED BY: ALEX <span class="redacted">███████</span>`;
+LOGGED BY: ALEX <span class="redacted">███████</span>`,
+`Security Log Night 2 — Edward’s Theme Park
+STATUS: ABANDONED
+POWER GRID: UNSTABLE
+ACCESS LEVEL: NIGHT SECURITY ONLY
+
+------------------------------------------------------------
+
+SHIFT UPDATE:
+Second night on-site. Systems react in unexpected ways.
+
+Camera feeds flicker and glitch.  
+Motion detectors trigger even in previously quiet zones.  
+Audio hums, machinery stutters, and shadows seem to move against logic.
+
+DO NOT TRUST THAT NOTHING IS MOVING.
+
+------------------------------------------------------------
+ENTITY STATUS UPDATE
+------------------------------------------------------------
+
+ENTITY: EDWARD THE DEVIL
+Relentless and unpredictable; monitoring slows him slightly but won’t stop his approach.
+
+ENTITY: NOMNOM THE DINO
+Moves toward any detected activity or sound; warnings are minimal.
+
+ENTITY: BIG THE BOULDER
+Appears on cameras, draining office power rapidly. Ignoring him risks full shutdown.
+
+ENTITY: SMILEY
+Jumpscares cameras, temporarily disabling feeds; more chaos can be dangerous if ignored.
+
+ENTITY: SHINY EDWARD
+Audio cues required to lure him away; ignoring him allows slow approach to office.
+
+ENTITY: SOY SAUCE EDWARD
+Will observe silently in office; mask required to prevent attack sequence.
+
+ENTITY: BUSINESS EDWARD
+Payment meter must remain active; neglect triggers aggressive movement toward the office.
+
+------------------------------------------------------------
+INCIDENT REPORT:
+At <span class="redacted">██:██</span>, Camera 03 displayed a hallway not listed in the map.
+A figure appeared briefly before vanishing.
+Feed glitched immediately afterward.
+
+------------------------------------------------------------
+REMINDER:
+Careful observation and resource management are key to surviving.
+Do not react impulsively.
+
+END OF NIGHT LOG
+LOGGED BY: ALEX <span class="redacted">███████</span>`, 
+`Security Log Night 3 — Edward’s Theme Park
+STATUS: ABANDONED
+POWER GRID: CRITICAL
+ACCESS LEVEL: NIGHT SECURITY ONLY
+
+------------------------------------------------------------
+
+SHIFT REPORT:
+Third night. Threats are escalating.
+
+Cameras glitch frequently; multiple zones trigger false positives.
+Sounds echo unnaturally through the empty park.
+Entities move faster and unpredictably.
+
+AVOID DIRECT CONTACT.
+
+------------------------------------------------------------
+ENTITY STATUS UPDATE
+------------------------------------------------------------
+
+ENTITY: EDWARD THE DEVIL
+Moves toward the office regardless of monitoring; slows slightly with careful observation.
+
+ENTITY: NOMNOM THE DINO
+Erratic movement, drawn to sounds and activity; monitoring warnings minimal.
+
+ENTITY: BIG THE BOULDER
+Office power drains rapidly when active; careful camera monitoring required.
+
+ENTITY: SMILEY
+Feed disruptions now overlap multiple cameras; can create dangerous distraction windows.
+
+ENTITY: SHINY EDWARD
+Bright and visible, but ignoring audio cues leads to approach; timing essential.
+
+ENTITY: SOY SAUCE EDWARD
+Mask required; failure triggers silent attack sequence in office.
+
+ENTITY: BUSINESS EDWARD
+Payment meter irregular; keeping funds flowing is critical to prevent aggression.
+
+------------------------------------------------------------
+INCIDENT REPORT:
+At <span class="redacted">██:██</span>, Camera 01 displayed a figure behind the station.
+Feed immediately glitched, coinciding with a power surge.
+Random distorted audio repeated <span class="redacted">██████████</span>.
+
+------------------------------------------------------------
+WARNING:
+Night 3 marks critical escalation.
+Entities actively anticipate operator patterns.
+Do not attempt unsanctioned overrides.
+
+END OF NIGHT LOG
+LOGGED BY: ALEX <span class="redacted">███████</span>`,
+`Security Log Night 4 — Edward’s Theme Park
+STATUS: ABANDONED
+POWER GRID: CRITICALLY UNSTABLE
+ACCESS LEVEL: NIGHT SECURITY ONLY
+
+------------------------------------------------------------
+
+SHIFT ALERT:
+Fourth night. Systems increasingly autonomous.
+
+Camera feeds distort, doors open and close independently.
+Auditory anomalies intensify—voices echo across the control room, repeating <span class="redacted">██████████</span>.
+
+AVOID VISUAL CONTACT WITH ENTITIES.
+
+------------------------------------------------------------
+ENTITY STATUS UPDATE
+------------------------------------------------------------
+
+ENTITY: EDWARD THE DEVIL
+Relentless; now capable of appearing in multiple feeds simultaneously.
+Direct observation slows but does not stop him.
+
+ENTITY: NOMNOM THE DINO
+Aggressive, erratic movement.
+Responds to sound and motion; monitoring only gives minimal warning.
+
+ENTITY: BIG THE BOULDER
+Appears on cameras draining office power; ignoring him risks full blackout.
+
+ENTITY: SMILEY
+Multiple feed disruptions; jump-scare chaos increased.
+
+ENTITY: SHINY EDWARD
+Audio cues required to lure him; otherwise he slowly approaches office.
+
+ENTITY: SOY SAUCE EDWARD
+Mask required to prevent attacks; failure leads to immediate threat.
+
+ENTITY: BUSINESS EDWARD
+Payment meter self-updating; must maintain flow to prevent aggression.
+
+------------------------------------------------------------
+INCIDENT REPORT:
+At <span class="redacted">██:██</span>, a figure entered the security office.
+All feeds glitched; power surged in east wing.
+Multiple anomalies recorded: <span class="redacted">████████</span>.
+
+------------------------------------------------------------
+WARNING:
+Night 4 is critical.  
+Entities anticipate operator actions; every choice matters.  
+
+END OF NIGHT LOG
+LOGGED BY: ALEX <span class="redacted">███████</span>`,
+`Security Log Night 5 — Edward’s Theme Park
+STATUS: ABANDONED
+POWER GRID: FAILURE IMMINENT
+ACCESS LEVEL: NIGHT SECURITY ONLY
+
+------------------------------------------------------------
+
+FINAL SHIFT REPORT:
+Fifth night. Systems collapsing entirely.
+
+Camera feeds flicker violently; doors operate independently.
+Auditory feedback is continuous: distorted voices repeating <span class="redacted">████████████</span>.
+Backup generators offline.  
+
+DO NOT MOVE.  
+Do not leave the office.  
+Do not react.
+
+------------------------------------------------------------
+ENTITY STATUS UPDATE
+------------------------------------------------------------
+
+ENTITY: EDWARD THE DEVIL
+Behavior unpredictable; can appear anywhere in feeds.
+Observation only slows him slightly.
+
+ENTITY: NOMNOM THE DINO
+Aggression unchecked; drawn to all activity and sound.
+
+ENTITY: BIG THE BOULDER
+Office power drains rapidly; ignoring him risks total blackout.
+
+ENTITY: SMILEY
+Feeds permanently disabled when active; jump-scare chaos escalated.
+
+ENTITY: SHINY EDWARD
+Approaches quickly if ignored; audio cues essential.
+
+ENTITY: SOY SAUCE EDWARD
+Mask required; failure triggers instant office attack.
+
+ENTITY: BUSINESS EDWARD
+Payment system fully corrupted; aggressive if funds lapse.
+
+------------------------------------------------------------
+INCIDENT REPORT:
+At <span class="redacted">██:██</span>, feed displayed a hallway not on maps.
+A figure gestured at the camera; feed glitched infinitely.
+Attempts to regain control failed.
+
+------------------------------------------------------------
+WARNING:
+Night 5 is terminal.
+Entities beyond prediction; monitoring is advisory only.
+Do not leave your post or react to anomalies.
+
+END OF NIGHT LOG
+LOGGED BY: ALEX <span class="redacted">███████</span>`
+];
 
 const entityAlerts = [
     () => `⚠ ENTITY MOVED: BIG THE BOULDER\nPOWER LEVEL DROPPING`,
     () => `⚠ ENTITY MOVED: SMILEY\nCAMERA FEEDS TEMPORARILY DISABLED`,
     () => `⚠ ENTITY MOVED: SHINY EDWARD\nAUDIO SYSTEM REQUIRED`,
-    () => `⚠ ENTITY MOVED: SOY SAUCE EDWARD\nMASK COMPLIANCE REQUIRED`,
-    () => `⚠ ENTITY MOVED: BUSINESS EDWARD\nPAYMENT FLOW INTERRUPTED`
 ];
 const cameraAlert = `⚠ CAMERA 03 DISCONNECTED\nSIGNAL LOST`;
+const corruptChars = ["#", "%", "@", "█", "?", "&"];
 
 const target = document.getElementById("logText");
-const screen = document.getElementById("screen");
 const overlay = document.getElementById("alertOverlay");
 const typeSound = document.getElementById("typeSound");
 const glitchSound = document.getElementById("glitchSound");
 const startOverlay = document.getElementById("startOverlay");
 const skipButton = document.getElementById("skipButton");
+const nextNight = document.getElementById("nextNight");
+const muteButton = document.getElementById("muteButton");
 
 let index = 0;
-const alertChance = BASE_ALERT_CHANCE * NIGHT;
-const corruptionChance = BASE_CORRUPTION_CHANCE + NIGHT * 0.01;
-const corruptChars = ["#", "%", "@", "█", "?", "&"];
 
-// ---------------- HELPER FUNCTIONS ----------------
+// ---------------- HELPERS ----------------
 function random(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
 function triggerGlitch(){
-    glitchSound.currentTime = 0;
-    glitchSound.volume = 0.35;
-    glitchSound.play();
-
-    screen.classList.add("shake");
+    if(!muted){ 
+        glitchSound.currentTime = 0;
+        glitchSound.play().catch(()=>{});
+    }
+    document.getElementById("screen").classList.add("shake");
     overlay.style.animation = "none";
     overlay.offsetHeight;
     overlay.style.animation = "overlayFlicker 0.6s linear";
-
-    if(NIGHT >= 4){
-        const reds = document.querySelectorAll(".redacted");
-        reds.forEach(r => {
-            r.style.animation = "pulseGlow 0.3s infinite alternate";
-            setTimeout(() => { r.style.animation = "pulseGlow 1.5s infinite alternate"; }, 500);
-        });
-    }
-
-    setTimeout(() => screen.classList.remove("shake"), 150);
+    setTimeout(()=>document.getElementById("screen").classList.remove("shake"), 150);
 }
 
 function insertAlert(text){
@@ -294,52 +531,108 @@ function insertAlert(text){
     triggerGlitch();
 }
 
-// ---------------- TYPE SOUND FUNCTION ----------------
-function playTypeSound(){
-    const sound = typeSound.cloneNode();
-    sound.volume = 0.5;
-    sound.playbackRate = 0.9 + Math.random() * 0.2;
-    sound.play();
+function playType(){
+    if(!muted){
+        const sound = typeSound.cloneNode();
+        sound.volume = 0.5;
+        sound.playbackRate = 0.9 + Math.random()*0.2;
+        sound.play().catch(()=>{});
+    }
 }
 
-// ---------------- TYPE LOG ----------------
-function typeLog(){
-    if(index < logContent.length){
-        let output = logContent.slice(0,index);
+// ---------------- TYPE LOOP ----------------
+function splitHTMLString(str) {
+    const result = [];
+    let tag = false;
+    let buffer = "";
+    for (let char of str) {
+        if (char === "<") tag = true;
+        if (tag) buffer += char;
+        else result.push(char);
+        if (char === ">") {
+            tag = false;
+            result.push(buffer);
+            buffer = "";
+        }
+    }
+    return result;
+}
 
-        if(Math.random() < corruptionChance){
+let charArray = splitHTMLString(logContent[NIGHT]);
+
+function typeLog() {
+    typing = true; // mark that typing is active
+    const corruptionChance = BASE_CORRUPTION_CHANCE + NIGHT*0.01;
+    const alertChance = BASE_ALERT_CHANCE * NIGHT;
+
+    if (!typing) return; // stop if typing was cancelled (skip clicked)
+
+    if (index < charArray.length) {
+        let output = charArray.slice(0, index + 1).join("");
+
+        // corruption effect
+        if (Math.random() < corruptionChance) {
             output += `<span class="corrupt">${random(corruptChars)}</span>`;
             triggerGlitch();
         }
 
-        if(index > ALERT_UNLOCK_INDEX && Math.random() < alertChance){
-            if(Math.random() < 0.2) insertAlert(cameraAlert);
+        // alert effect
+        if (index > ALERT_UNLOCK_INDEX && Math.random() < alertChance) {
+            if (Math.random() < 0.2) insertAlert(cameraAlert);
             else insertAlert(random(entityAlerts)());
         }
 
-        target.innerHTML = output + '<span class="cursor"></span>';
-
-        playTypeSound();
+        target.innerHTML = output + "<span class='cursor'></span>";
+        playType();
         index++;
+
         setTimeout(typeLog, speed);
     } else {
-        target.innerHTML = logContent;
+        // typing finished
+        target.innerHTML = charArray.join("");
+        typing = false;
+        if (NIGHT < maxNight) nextNight.style.display = "inline-block";
     }
 }
 
-// ---------------- START ON CLICK ----------------
+// ---------------- BUTTONS ----------------
 startOverlay.addEventListener("click", () => {
     startOverlay.style.display = "none";
-    typeLog();
+
+    // ensure NIGHT is valid
+    if(NIGHT < 1 || NIGHT > maxNight) NIGHT = 1;
+
+    try {
+        typeLog();
+    } catch(e) {
+        console.error("Typing failed:", e);
+        target.innerHTML = logContent[1]; // fallback
+    }
 });
 
-// ---------------- SKIP BUTTON ----------------
-skipButton.addEventListener("click", (e)=>{
+skipButton.addEventListener("click",(e)=>{
     e.preventDefault();
-    index = logContent.length;
-    target.innerHTML = logContent;
+    typing = false; // stop typeLog loop
+    index = logContent[NIGHT].length;
+    target.innerHTML = logContent[NIGHT]; // show full content
+    if(NIGHT < maxNight) nextNight.style.display = "inline-block";
+});
+
+nextNight.addEventListener("click", (e) => {
+    e.preventDefault();
+    NIGHT++;               // move to next night
+    index = 0;             // reset typing index
+    speed = baseSpeed - NIGHT * 5; // update speed
+    target.innerHTML = ""; // clear screen
+    nextNight.style.display = "none"; // hide button
+    charArray = splitHTMLString(logContent[NIGHT]); // split the new night log
+    typeLog();             // start typing
+});
+
+muteButton.addEventListener("click",()=>{
+    muted = !muted;
+    muteButton.innerText = muted ? "Unmute" : "Mute";
 });
 </script>
-
 </body>
 </html>
