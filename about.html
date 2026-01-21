@@ -18,6 +18,7 @@
     opacity: 0;
     animation: overlayFlicker 0.6s linear;
 }
+
 @keyframes overlayFlicker {
     0% { opacity: 0; }
     20% { opacity: 0.4; }
@@ -180,6 +181,18 @@ body {
 #muteButton:hover {
     background: #5b1b1b;
 }
+
+/* POPUP SHAKE EFFECT */
+.popup-shake {
+    animation: popupShake 0.25s linear;
+}
+@keyframes popupShake {
+    0% { transform: translateX(-50%) translateY(0); }
+    25% { transform: translateX(-50%) translateY(-5px); }
+    50% { transform: translateX(-50%) translateY(5px); }
+    75% { transform: translateX(-50%) translateY(-5px); }
+    100% { transform: translateX(-50%) translateY(0); }
+}
 </style>
 </head>
 <body>
@@ -199,6 +212,46 @@ body {
 <audio id="typeSound" src="resources/type.mp3" preload="auto"></audio>
 <audio id="glitchSound" src="resources/glitch.mp3" preload="auto"></audio>
 
+<!-- RED FLASH OVERLAY -->
+<div id="flashOverlay" style="
+    position: fixed;
+    inset: 0;
+    background: rgba(255,0,0,0.3);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+"></div>
+
+<!-- ALERT POPUP -->
+<div id="alertPopup" style="
+    position: fixed; 
+    top: -120px; 
+    left: 50%; 
+    transform: translateX(-50%);
+    background: #111; 
+    border: 2px solid #ff2b2b; 
+    padding: 20px 30px; 
+    color: #ff2b2b;
+    font-family: 'Courier New', monospace; 
+    font-size: 1.1rem; 
+    text-align: center; 
+    z-index: 10000;
+    box-shadow: 0 0 20px red; 
+    transition: top 0.5s ease;
+">
+    <span id="alertPopupText"></span>
+    <div id="resolveBox" style="
+        margin-top:12px; 
+        padding:8px 12px; 
+        border:1px solid #ff2b2b; 
+        color:#fff; 
+        background:#111; 
+        cursor:pointer; 
+        display:inline-block;
+    "></div>
+</div>
+
 <script>
 // ---------------- CONFIG ----------------
 let NIGHT = 1;
@@ -207,14 +260,13 @@ const baseSpeed = 120;
 let speed = baseSpeed - NIGHT*5;
 const BASE_ALERT_CHANCE = 0.004;
 const BASE_CORRUPTION_CHANCE = 0.05;
-const ALERT_UNLOCK_INDEX = 50; // smaller for demo
+const ALERT_UNLOCK_INDEX = 50;
 
 let muted = false;
 
-// Replace with your actual log text per night
 const logContent = [
-"", // index 0 not used
-`Security Log Night 1 — Edward’s Theme Park
+"", // index 0 unused
+`Security Log 1 — Edward’s Theme Park
 STATUS: ABANDONED
 POWER GRID: PARTIALLY OFFLINE
 ACCESS LEVEL: NIGHT SECURITY ONLY
@@ -267,8 +319,8 @@ Corporate-themed Edward variant with briefcase.
 Requires a constant payment flow to remain passive; neglect triggers aggression.
 
 END OF NIGHT LOG
-LOGGED BY: ALEX <span class="redacted">███████</span>`,
-`Security Log Night 2 — Edward’s Theme Park
+LOGGED BY: ALEX <span class="redacted">███████</span>`, 
+`Security Log 2 — Edward’s Theme Park
 STATUS: ABANDONED
 POWER GRID: UNSTABLE
 ACCESS LEVEL: NIGHT SECURITY ONLY
@@ -321,8 +373,8 @@ Careful observation and resource management are key to surviving.
 Do not react impulsively.
 
 END OF NIGHT LOG
-LOGGED BY: ALEX <span class="redacted">███████</span>`, 
-`Security Log Night 3 — Edward’s Theme Park
+LOGGED BY: ALEX <span class="redacted">███████</span>`,
+`Security Log 3 — Edward’s Theme Park
 STATUS: ABANDONED
 POWER GRID: CRITICAL
 ACCESS LEVEL: NIGHT SECURITY ONLY
@@ -365,7 +417,7 @@ Payment meter irregular; keeping funds flowing is critical to prevent aggression
 
 ------------------------------------------------------------
 INCIDENT REPORT:
-At <span class="redacted">██:██</span>, Camera 01 displayed a figure behind the station.
+At <span class="redacted">██:██</span>, Camera 07 displayed a figure behind the station.
 Feed immediately glitched, coinciding with a power surge.
 Random distorted audio repeated <span class="redacted">██████████</span>.
 
@@ -377,7 +429,7 @@ Do not attempt unsanctioned overrides.
 
 END OF NIGHT LOG
 LOGGED BY: ALEX <span class="redacted">███████</span>`,
-`Security Log Night 4 — Edward’s Theme Park
+`Security Log 4 — Edward’s Theme Park
 STATUS: ABANDONED
 POWER GRID: CRITICALLY UNSTABLE
 ACCESS LEVEL: NIGHT SECURITY ONLY
@@ -432,7 +484,7 @@ Entities anticipate operator actions; every choice matters.
 
 END OF NIGHT LOG
 LOGGED BY: ALEX <span class="redacted">███████</span>`,
-`Security Log Night 5 — Edward’s Theme Park
+`Security Log 5 — Edward’s Theme Park
 STATUS: ABANDONED
 POWER GRID: FAILURE IMMINENT
 ACCESS LEVEL: NIGHT SECURITY ONLY
@@ -492,12 +544,13 @@ END OF NIGHT LOG
 LOGGED BY: ALEX <span class="redacted">███████</span>`
 ];
 
+// ALERTS
 const entityAlerts = [
-    () => `⚠ ENTITY MOVED: BIG THE BOULDER\nPOWER LEVEL DROPPING`,
-    () => `⚠ ENTITY MOVED: SMILEY\nCAMERA FEEDS TEMPORARILY DISABLED`,
-    () => `⚠ ENTITY MOVED: SHINY EDWARD\nAUDIO SYSTEM REQUIRED`,
+    { text: "⚠ ENTITY MOVED: BIG THE BOULDER\nPOWER LEVEL DROPPING", resolve:"Stabilized Boulder Power" },
+    { text: "⚠ ENTITY MOVED: SMILEY\nCAMERA FEEDS TEMPORARILY DISABLED", resolve:"Feeds Restored" },
+    { text: "⚠ ENTITY MOVED: SHINY EDWARD\nAUDIO SYSTEM REQUIRED", resolve:"Audio Rebooted" }
 ];
-const cameraAlert = `⚠ CAMERA 03 DISCONNECTED\nSIGNAL LOST`;
+const cameraAlert = { text: "⚠ CAMERA 03 DISCONNECTED\nSIGNAL LOST", resolve: "Camera Signal Restored" };
 const corruptChars = ["#", "%", "@", "█", "?", "&"];
 
 const target = document.getElementById("logText");
@@ -509,7 +562,14 @@ const skipButton = document.getElementById("skipButton");
 const nextNight = document.getElementById("nextNight");
 const muteButton = document.getElementById("muteButton");
 
+const popup = document.getElementById("alertPopup");
+const popupText = document.getElementById("alertPopupText");
+const resolveBox = document.getElementById("resolveBox");
+const flashOverlay = document.getElementById("flashOverlay");
+
 let index = 0;
+let typingPaused = false;
+let typing = false;
 
 // ---------------- HELPERS ----------------
 function random(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
@@ -526,11 +586,6 @@ function triggerGlitch(){
     setTimeout(()=>document.getElementById("screen").classList.remove("shake"), 150);
 }
 
-function insertAlert(text){
-    target.innerHTML += `<span class="alert">${text}</span>\n\n`;
-    triggerGlitch();
-}
-
 function playType(){
     if(!muted){
         const sound = typeSound.cloneNode();
@@ -539,6 +594,25 @@ function playType(){
         sound.play().catch(()=>{});
     }
 }
+
+// ---------------- POPUP ----------------
+function showAlert(alert){
+    typingPaused = true;
+    popupText.innerText = alert.text;
+    resolveBox.innerText = alert.resolve;
+    popup.style.top = "50px";
+    flashOverlay.style.opacity = 0.3;
+
+    // add shake/glitch
+    popup.classList.add("popup-shake");
+    setTimeout(()=> popup.classList.remove("popup-shake"), 300);
+}
+
+resolveBox.addEventListener("click", ()=>{
+    popup.style.top = "-120px";
+    flashOverlay.style.opacity = 0;
+    typingPaused = false;
+});
 
 // ---------------- TYPE LOOP ----------------
 function splitHTMLString(str) {
@@ -561,34 +635,32 @@ function splitHTMLString(str) {
 let charArray = splitHTMLString(logContent[NIGHT]);
 
 function typeLog() {
-    typing = true; // mark that typing is active
+    if (typingPaused) {
+        setTimeout(typeLog, 100);
+        return;
+    }
+
     const corruptionChance = BASE_CORRUPTION_CHANCE + NIGHT*0.01;
     const alertChance = BASE_ALERT_CHANCE * NIGHT;
 
-    if (!typing) return; // stop if typing was cancelled (skip clicked)
-
     if (index < charArray.length) {
-        let output = charArray.slice(0, index + 1).join("");
+        let output = charArray.slice(0, index+1).join("");
 
-        // corruption effect
         if (Math.random() < corruptionChance) {
             output += `<span class="corrupt">${random(corruptChars)}</span>`;
             triggerGlitch();
         }
 
-        // alert effect
-        if (index > ALERT_UNLOCK_INDEX && Math.random() < alertChance) {
-            if (Math.random() < 0.2) insertAlert(cameraAlert);
-            else insertAlert(random(entityAlerts)());
+        if(index > ALERT_UNLOCK_INDEX && Math.random() < alertChance){
+            const alert = Math.random() < 0.2 ? cameraAlert : random(entityAlerts);
+            showAlert(alert);
         }
 
         target.innerHTML = output + "<span class='cursor'></span>";
         playType();
         index++;
-
         setTimeout(typeLog, speed);
     } else {
-        // typing finished
         target.innerHTML = charArray.join("");
         typing = false;
         if (NIGHT < maxNight) nextNight.style.display = "inline-block";
@@ -598,35 +670,29 @@ function typeLog() {
 // ---------------- BUTTONS ----------------
 startOverlay.addEventListener("click", () => {
     startOverlay.style.display = "none";
-
-    // ensure NIGHT is valid
     if(NIGHT < 1 || NIGHT > maxNight) NIGHT = 1;
-
-    try {
-        typeLog();
-    } catch(e) {
-        console.error("Typing failed:", e);
-        target.innerHTML = logContent[1]; // fallback
-    }
+    charArray = splitHTMLString(logContent[NIGHT]);
+    typeLog();
 });
 
 skipButton.addEventListener("click",(e)=>{
     e.preventDefault();
-    typing = false; // stop typeLog loop
+    typingPaused = false;
+    typing = false;
     index = logContent[NIGHT].length;
-    target.innerHTML = logContent[NIGHT]; // show full content
+    target.innerHTML = logContent[NIGHT];
     if(NIGHT < maxNight) nextNight.style.display = "inline-block";
 });
 
 nextNight.addEventListener("click", (e) => {
     e.preventDefault();
-    NIGHT++;               // move to next night
-    index = 0;             // reset typing index
-    speed = baseSpeed - NIGHT * 5; // update speed
-    target.innerHTML = ""; // clear screen
-    nextNight.style.display = "none"; // hide button
-    charArray = splitHTMLString(logContent[NIGHT]); // split the new night log
-    typeLog();             // start typing
+    NIGHT++;
+    index = 0;
+    speed = baseSpeed - NIGHT * 5;
+    target.innerHTML = "";
+    nextNight.style.display = "none";
+    charArray = splitHTMLString(logContent[NIGHT]);
+    typeLog();
 });
 
 muteButton.addEventListener("click",()=>{
