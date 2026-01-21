@@ -738,34 +738,37 @@ function startResolve(alert){
 
     let progress = 0;
 
-    function pulseAndFlicker() {
-        const flicker = 0.5 + Math.random() * 0.5; // flicker effect
-        bar.style.width = `${Math.min(progress * flicker, 100)}%`;
-    }
-
     const interval = setInterval(() => {
-        progress += Math.random() * 2; // speed fluctuates
-        pulseAndFlicker();
+        progress += Math.random() * 2;
+        bar.style.width = `${Math.min(progress, 100)}%`;
+
         if(progress >= 100){
             clearInterval(interval);
             bar.style.width = "100%";
-            bar.style.background = "#0f0"; // flash green
+            bar.style.background = "#0f0";
 
             if(!muted){
-                const resolveSound = document.getElementById("resolveSound");
                 resolveSound.currentTime = 0;
                 resolveSound.play().catch(()=>{});
             }
 
-            // reset everything so typing can continue
+            // 🔹 SHOW RESOLVED TEXT
+            resolveBox.style.display = "inline-block";
+            resolveBox.innerText = alert.resolved;
+            resolveBox.style.color = "#0f0";
+            resolveBox.style.animation = "resolvePulse 0.6s infinite alternate";
+
+            // 🔹 WAIT BEFORE HIDING EVERYTHING
             setTimeout(() => {
                 barContainer.remove();
-                typingPaused = false;      // ← unpause typing
-                popup.style.top = "-120px"; // hide popup
+                popup.style.top = "-120px";
                 flashOverlay.style.opacity = 0;
-            }, 500);
+                resolveBox.style.animation = "none";
+
+                typingPaused = false; // resume typing AFTER delay
+            }, 800); // ← delay after bar completes
         }
-    }, 50 + Math.random() * 50); // random interval for flicker
+    }, 50 + Math.random() * 50);
 }
 
 // ---------------- BUTTONS ----------------
