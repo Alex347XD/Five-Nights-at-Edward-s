@@ -62,9 +62,7 @@ body {
 }
 
 /* SCREEN SHAKE */
-.shake {
-    animation: shake 0.15s linear;
-}
+.shake { animation: shake 0.15s linear; }
 @keyframes shake {
     0% { transform: translate(0, 0); }
     25% { transform: translate(-2px, 1px); }
@@ -131,10 +129,7 @@ body {
     margin-left: 4px;
     animation: blink 1s infinite;
 }
-@keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
-}
+@keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
 
 /* BACK & SKIP & NEXT BUTTONS */
 .back, #nextNight {
@@ -147,9 +142,7 @@ body {
     text-decoration: none;
     cursor: pointer;
 }
-.back:hover, #nextNight:hover {
-    background: #5b1b1b;
-}
+.back:hover, #nextNight:hover { background: #5b1b1b; }
 
 /* START OVERLAY */
 #startOverlay {
@@ -178,9 +171,7 @@ body {
     color: #fff;
     cursor: pointer;
 }
-#muteButton:hover {
-    background: #5b1b1b;
-}
+#muteButton:hover { background: #5b1b1b; }
 
 /* POPUP SHAKE EFFECT */
 .popup-shake {
@@ -192,6 +183,37 @@ body {
     50% { transform: translateX(-50%) translateY(5px); }
     75% { transform: translateX(-50%) translateY(-5px); }
     100% { transform: translateX(-50%) translateY(0); }
+}
+
+/* POPUP LOADING BAR */
+#loadingBarContainer {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 20px;
+    background: #111;
+    border: 2px solid #ff2b2b;
+    display: none;
+    z-index: 10001;
+}
+
+#loadingBar {
+    width: 0%;
+    height: 100%;
+    background: #ff2b2b;
+    transition: width 0.1s linear;
+}
+
+@keyframes resolvePulse {
+    0% { box-shadow: 0 0 6px #0f0; }
+    50% { box-shadow: 0 0 14px #0f0; }
+    100% { box-shadow: 0 0 6px #0f0; }
+}
+
+#resolveBar {
+    animation: resolvePulse 0.6s infinite alternate;
 }
 </style>
 </head>
@@ -211,6 +233,7 @@ body {
 <!-- AUDIO -->
 <audio id="typeSound" src="resources/type.mp3" preload="auto"></audio>
 <audio id="glitchSound" src="resources/glitch.mp3" preload="auto"></audio>
+<audio id="resolveSound" src="resources/resolve.mp3" preload="auto"></audio>
 
 <!-- RED FLASH OVERLAY -->
 <div id="flashOverlay" style="
@@ -252,6 +275,9 @@ body {
     "></div>
 </div>
 
+<!-- LOADING BAR -->
+<div id="loadingBarContainer"><div id="loadingBar"></div></div>
+
 <script>
 // ---------------- CONFIG ----------------
 let NIGHT = 1;
@@ -261,7 +287,6 @@ let speed = baseSpeed - NIGHT*5;
 const BASE_ALERT_CHANCE = 0.0005;
 const BASE_CORRUPTION_CHANCE = 0.05;
 const ALERT_UNLOCK_INDEX = 50;
-
 let muted = false;
 
 const logContent = [
@@ -550,31 +575,35 @@ LOGGED BY: ALEX <span class="redacted">███████</span>`
 
 // ALERTS
 const entityAlerts = [
-    { text: "⚠ ENTITY MOVED: BIG THE BOULDER\nPOWER LEVEL DROPPING", resolve: "Stabilize Power" },
-    { text: "⚠ ENTITY MOVED: SMILEY\nCAMERA FEEDS TEMPORARILY DISABLED", resolve: "Restore Feeds" },
-    { text: "⚠ ENTITY MOVED: SHINY EDWARD\nAUDIO LURE REQUIRED", resolve: "Reboot Audio Lure" },
-    { text: "⚠ ENTITY MOVED: EDWARD THE DEVIL\nAPPROACHING OFFICE", resolve: "Close Left Door" },
-    { text: "⚠ ENTITY MOVED: NOMNOM THE DINO\nMOVEMENT DETECTED NEAR OFFICE", resolve: "Close Right Door" },
-    { text: "⚠ ENTITY MOVED: SOY SAUCE EDWARD\nMASK NOT DETECTED", resolve: "Wear Mask" },
-    { text: "⚠ ENTITY MOVED: BUSINESS EDWARD\nPAYMENT METER LOW", resolve: "Pay Employee" }
+    { text: "⚠ ENTITY MOVED: BIG THE BOULDER\nPOWER LEVEL DROPPING", resolve: "Stabilize Power", resolved: "Power Stabilized" },
+    { text: "⚠ ENTITY MOVED: SMILEY\nCAMERA FEEDS TEMPORARILY DISABLED", resolve: "Restore Feeds", resolved: "Camera Feeds Restored" },
+    { text: "⚠ ENTITY MOVED: SHINY EDWARD\nAUDIO LURE REQUIRED", resolve: "Reboot Audio Lure", resolved: "Audio Lure Online" },
+    { text: "⚠ ENTITY MOVED: EDWARD THE DEVIL\nAPPROACHING OFFICE", resolve: "Close Left Door", resolved: "Left Door Closed" },
+    { text: "⚠ ENTITY MOVED: NOMNOM THE DINO\nMOVEMENT DETECTED NEAR OFFICE", resolve: "Close Right Door", resolved: "Right Door Closed" },
+    { text: "⚠ ENTITY MOVED: SOY SAUCE EDWARD\nMASK NOT DETECTED", resolve: "Wear Mask", resolved: "Mask On" },
+    { text: "⚠ ENTITY MOVED: BUSINESS EDWARD\nPAYMENT METER LOW", resolve: "Pay Employee", resolved: "Employee Paid" }
 ];
 
 const cameraAlerts = [
     { 
         text: "⚠ CAMERA 01 (HELL)\nFIRE EFFECTS FLICKERING\nSMOKE DETECTED IN CORRIDORS", 
-        resolve: "Check Fire Suppression" 
+        resolve: "Check Fire Suppression",
+	resolved: "Fire Suppression Checked"
     },
     { 
         text: "⚠ CAMERA 02 (MOUNTAIN)\nROCK SLIDE TRIGGERED\nDEBRIS BLOCKING PATHS", 
-        resolve: "Clear Mountain Debris" 
+        resolve: "Clear Mountain Debris",
+	resolved: "Mountain Debris Cleared"
     },
     { 
         text: "⚠ CAMERA 03 (FOREST)\nTREES SWAY WITHOUT WIND\nUNIDENTIFIED MOVEMENTS IN UNDERBRUSH", 
-        resolve: "Inspect Forest" 
+        resolve: "Inspect Forest",
+	resolved: "Forest Inspected"
     },
     { 
         text: "⚠ CAMERA 04 (DINOSAUR EXHIBIT)\nEXHIBIT LIGHTS FLICKERING\nANCIENT MACHINERY STIRRING", 
-        resolve: "Reset Exhibit Systems" 
+        resolve: "Reset Exhibit Systems",
+	resolved: "Exghibit Systems Reset" 
     }
 ];
 const corruptChars = ["#", "%", "@", "█", "?", "&"];
@@ -592,6 +621,9 @@ const popup = document.getElementById("alertPopup");
 const popupText = document.getElementById("alertPopupText");
 const resolveBox = document.getElementById("resolveBox");
 const flashOverlay = document.getElementById("flashOverlay");
+
+const loadingBarContainer = document.getElementById("loadingBarContainer");
+const loadingBar = document.getElementById("loadingBar");
 
 let index = 0;
 let typingPaused = false;
@@ -621,24 +653,24 @@ function playType(){
     }
 }
 
-// ---------------- POPUP ----------------
+// ---------------- ALERT + LOADING ----------------
+let currentAlert = null;
+
 function showAlert(alert){
     typingPaused = true;
+    currentAlert = alert; // save for when button clicked
+
     popupText.innerText = alert.text;
-    resolveBox.innerText = alert.resolve;
+    resolveBox.innerText = alert.resolve; // button text is alert.resolve
+    resolveBox.style.display = "inline-block";
+    resolveBox.style.color = "#fff";
     popup.style.top = "50px";
     flashOverlay.style.opacity = 0.3;
 
-    // add shake/glitch
+    // shake/glitch effect
     popup.classList.add("popup-shake");
     setTimeout(()=> popup.classList.remove("popup-shake"), 300);
 }
-
-resolveBox.addEventListener("click", ()=>{
-    popup.style.top = "-120px";
-    flashOverlay.style.opacity = 0;
-    typingPaused = false;
-});
 
 // ---------------- TYPE LOOP ----------------
 function splitHTMLString(str) {
@@ -661,27 +693,19 @@ function splitHTMLString(str) {
 let charArray = splitHTMLString(logContent[NIGHT]);
 
 function typeLog() {
-    if (typingPaused) {
-        setTimeout(typeLog, 100);
-        return;
-    }
-
+    if (typingPaused) { setTimeout(typeLog, 100); return; }
     const corruptionChance = BASE_CORRUPTION_CHANCE + NIGHT*0.01;
     const alertChance = BASE_ALERT_CHANCE * NIGHT;
-
     if (index < charArray.length) {
         let output = charArray.slice(0, index+1).join("");
-
         if (Math.random() < corruptionChance) {
             output += `<span class="corrupt">${random(corruptChars)}</span>`;
             triggerGlitch();
         }
-
         if(index > ALERT_UNLOCK_INDEX && Math.random() < alertChance){
-            const alert = Math.random() < 0.2 ? cameraAlert : random(entityAlerts);
+            const alert = Math.random() < 0.2 ? random(cameraAlerts) : random(entityAlerts);
             showAlert(alert);
         }
-
         target.innerHTML = output + "<span class='cursor'></span>";
         playType();
         index++;
@@ -691,6 +715,57 @@ function typeLog() {
         typing = false;
         if (NIGHT < maxNight) nextNight.style.display = "inline-block";
     }
+}
+
+function startResolve(alert){
+    const barContainer = document.createElement("div");
+    barContainer.style.position = "fixed";
+    barContainer.style.top = "50%";
+    barContainer.style.left = "50%";
+    barContainer.style.transform = "translate(-50%, -50%)";
+    barContainer.style.width = "300px";
+    barContainer.style.height = "12px";
+    barContainer.style.border = "2px solid #ff2b2b";
+    barContainer.style.background = "#111";
+    barContainer.style.zIndex = 10001;
+    document.body.appendChild(barContainer);
+
+    const bar = document.createElement("div");
+    bar.style.width = "0%";
+    bar.style.height = "100%";
+    bar.style.background = "#ff3c3c";
+    barContainer.appendChild(bar);
+
+    let progress = 0;
+
+    function pulseAndFlicker() {
+        const flicker = 0.5 + Math.random() * 0.5; // flicker effect
+        bar.style.width = `${Math.min(progress * flicker, 100)}%`;
+    }
+
+    const interval = setInterval(() => {
+        progress += Math.random() * 2; // speed fluctuates
+        pulseAndFlicker();
+        if(progress >= 100){
+            clearInterval(interval);
+            bar.style.width = "100%";
+            bar.style.background = "#0f0"; // flash green
+
+            if(!muted){
+                const resolveSound = document.getElementById("resolveSound");
+                resolveSound.currentTime = 0;
+                resolveSound.play().catch(()=>{});
+            }
+
+            // reset everything so typing can continue
+            setTimeout(() => {
+                barContainer.remove();
+                typingPaused = false;      // ← unpause typing
+                popup.style.top = "-120px"; // hide popup
+                flashOverlay.style.opacity = 0;
+            }, 500);
+        }
+    }, 50 + Math.random() * 50); // random interval for flicker
 }
 
 // ---------------- BUTTONS ----------------
@@ -725,6 +800,16 @@ muteButton.addEventListener("click",()=>{
     muted = !muted;
     muteButton.innerText = muted ? "Unmute" : "Mute";
 });
+
+resolveBox.addEventListener("click", () => {
+    if (!currentAlert) return;
+
+    resolveBox.style.display = "none"; // hide button while bar runs
+    startResolve(currentAlert); // start the progress bar
+    currentAlert = null;
+});
+
+
 </script>
 </body>
 </html>
