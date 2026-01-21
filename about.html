@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Five Nights at Edward's</title>
+<link rel="icon" type="image/png" href="favicon.png" />
+<link rel="icon" sizes="32x32" href="favicon-32.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png" />
+
+<style>
+/* ALERT OVERLAY */
+.alert-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 0, 0, 0.15);
+    pointer-events: none;
+    opacity: 0;
+    animation: overlayFlicker 0.6s linear;
+}
+@keyframes overlayFlicker {
+    0% { opacity: 0; }
+    20% { opacity: 0.4; }
+    40% { opacity: 0.1; }
+    60% { opacity: 0.35; }
+    100% { opacity: 0; }
+}
+
+/* ALERT TEXT */
+.alert {
+    color: #ff2b2b;
+    font-weight: bold;
+    text-shadow: 0 0 6px red;
+    animation: alertFlash 0.8s infinite;
+}
+@keyframes alertFlash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+body {
+    margin: 0;
+    background: #000;
+    color: #cfcfcf;
+    font-family: "Courier New", Courier, monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.log-container {
+    background: #050505;
+    border: 2px solid #5b1b1b;
+    padding: 30px;
+    max-width: 900px;
+    width: 95%;
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.25);
+    position: relative;
+}
+
+/* SCREEN SHAKE */
+.shake {
+    animation: shake 0.15s linear;
+}
+@keyframes shake {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(-2px, 1px); }
+    50% { transform: translate(2px, -1px); }
+    75% { transform: translate(-1px, 2px); }
+    100% { transform: translate(0, 0); }
+}
+
+/* LOG TEXT */
+.log {
+    white-space: pre-wrap;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+/* REDACTIONS */
+.redacted {
+    background: #8B0000;
+    color: #8B0000;
+    padding: 0 4px;
+    border-radius: 2px;
+    cursor: help;
+    position: relative;
+    font-weight: bold;
+    box-shadow: 0 0 6px #FF0000;
+    animation: pulseGlow 1.5s infinite alternate;
+}
+.redacted::after {
+    content: "████████";
+    color: #FF0000;
+    text-shadow: 0 0 6px #FF0000, 0 0 12px #FF0000;
+}
+.redacted:hover {
+    color: #fff;
+    animation: glitch 0.35s infinite, pulseGlow 1.5s infinite alternate;
+    text-shadow: 0 0 6px #FF0000, 0 0 12px #FF0000, 0 0 20px #FF4C4C;
+}
+
+/* Pulsing glow animation */
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 6px #FF0000, 0 0 10px #FF0000; }
+    50% { box-shadow: 0 0 12px #FF4C4C, 0 0 20px #FF4C4C; }
+    100% { box-shadow: 0 0 6px #FF0000, 0 0 10px #FF0000; }
+}
+
+/* GLITCH EFFECT */
+@keyframes glitch {
+    0% { text-shadow: 2px 0 red; }
+    20% { text-shadow: -2px 0 cyan; }
+    40% { text-shadow: 2px 0 white; }
+    60% { text-shadow: -1px 0 red; }
+    100% { text-shadow: none; }
+}
+.corrupt {
+    color: #ff3c3c;
+    text-shadow: 0 0 6px red;
+}
+
+/* CURSOR */
+.cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1em;
+    background: #ff3c3c;
+    margin-left: 4px;
+    animation: blink 1s infinite;
+}
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+/* BACK BUTTON */
+.back {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 8px 12px;
+    border: 1px solid #555;
+    color: #fff;
+    text-decoration: none;
+}
+.back:hover {
+    background: #5b1b1b;
+}
+
+/* START OVERLAY */
+#startOverlay {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ff3c3c;
+    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 9999;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="log-container" id="screen">
+    <div class="alert-overlay" id="alertOverlay"></div>
+    <div class="log" id="logText"></div>
+    <a href="index.html" class="back">← RETURN TO MAIN MENU</a>
+</div>
+
+<!-- CLICK TO START OVERLAY -->
+<div id="startOverlay">CLICK TO START NIGHT SHIFT</div>
+
+<!-- AUDIO -->
+<audio id="typeSound" src="resources/type.mp3" preload="auto"></audio>
+<audio id="glitchSound" src="resources/glitch.mp3" preload="auto"></audio>
+
+<script>
+/* ---------------- CONFIG ---------------- */
+// Randomize night 1–5
+let NIGHT = Math.floor(Math.random() * 5) + 1;
+
+// Typing speed
+const baseSpeed = 120; // ms per character (slower)
+const speed = baseSpeed - NIGHT * 5;
+
+const BASE_ALERT_CHANCE = 0.004;
+const BASE_CORRUPTION_CHANCE = 0.05;
+const ALERT_UNLOCK_INDEX = 550;
+
+const logContent = `
+Security Log 1 — Edward’s Theme Park
+STATUS: ABANDONED
+POWER GRID: PARTIALLY OFFLINE
+ACCESS LEVEL: NIGHT SECURITY ONLY
+
+------------------------------------------------------------
+
+ASSIGNMENT BRIEF:
+You are the assigned overnight security guard of Edward’s Theme Park.
+
+The park has been closed for <span class="redacted">██████████</span>.
+No caretakers.
+No official power source.
+
+Camera feeds activate despite <span class="redacted">██████████████</span>.
+Motion sensors trigger in sealed zones.
+Visual anomalies detected when zooming feeds.
+
+THIS LOCATION IS NOT EMPTY.
+
+------------------------------------------------------------
+KNOWN ANIMATRONIC ENTITIES
+------------------------------------------------------------
+
+ENTITY: EDWARD THE DEVIL
+Behavior classified as <span class="redacted">██████████</span>.
+Monitoring ineffective.
+
+ENTITY: NOMNOM THE DINO
+Movement logic <span class="redacted">████████</span>.
+
+ENTITY: BIG THE BOULDER
+Camera-only entity.
+Power drain <span class="redacted">██████████</span>.
+
+ENTITY: SMILEY
+Threat level <span class="redacted">████</span> (INDIRECT).
+
+ENTITY: SHINY EDWARD
+Audio diversion <span class="redacted">████████</span> required.
+
+ENTITY: SOY SAUCE EDWARD
+Mask compliance <span class="redacted">██████████</span>.
+
+ENTITY: BUSINESS EDWARD
+Payment meter <span class="redacted">████████████</span>.
+
+END OF LOG
+`;
+
+const entityAlerts = [
+    () => `⚠ ENTITY MOVED: BIG THE BOULDER\nPOWER LEVEL DROPPING`,
+    () => `⚠ ENTITY MOVED: SMILEY\nCAMERA FEEDS TEMPORARILY DISABLED`,
+    () => `⚠ ENTITY MOVED: SHINY EDWARD\nAUDIO SYSTEM REQUIRED`,
+    () => `⚠ ENTITY MOVED: SOY SAUCE EDWARD\nMASK COMPLIANCE REQUIRED`,
+    () => `⚠ ENTITY MOVED: BUSINESS EDWARD\nPAYMENT FLOW INTERRUPTED`
+];
+const cameraAlert = `⚠ CAMERA 03 DISCONNECTED\nSIGNAL LOST`;
+
+const target = document.getElementById("logText");
+const screen = document.getElementById("screen");
+const overlay = document.getElementById("alertOverlay");
+const typeSound = document.getElementById("typeSound");
+const glitchSound = document.getElementById("glitchSound");
+const startOverlay = document.getElementById("startOverlay");
+
+let index = 0;
+const alertChance = BASE_ALERT_CHANCE * NIGHT;
+const corruptionChance = BASE_CORRUPTION_CHANCE + NIGHT * 0.01;
+const corruptChars = ["#", "%", "@", "█", "?", "&"];
+
+// ---------------- HELPER FUNCTIONS ----------------
+function random(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function triggerGlitch(){
+    glitchSound.currentTime = 0;
+    glitchSound.volume = 0.35;
+    glitchSound.play();
+
+    screen.classList.add("shake");
+    overlay.style.animation = "none";
+    overlay.offsetHeight;
+    overlay.style.animation = "overlayFlicker 0.6s linear";
+
+    if(NIGHT >= 4){
+        const reds = document.querySelectorAll(".redacted");
+        reds.forEach(r => {
+            r.style.animation = "pulseGlow 0.3s infinite alternate";
+            setTimeout(() => { r.style.animation = "pulseGlow 1.5s infinite alternate"; }, 500);
+        });
+    }
+
+    setTimeout(() => screen.classList.remove("shake"), 150);
+}
+
+function insertAlert(text){
+    target.innerHTML += `<span class="alert">${text}</span>\n\n`;
+    triggerGlitch();
+}
+
+// ---------------- TYPE SOUND FUNCTION ----------------
+function playTypeSound(){
+    const sound = typeSound.cloneNode();
+    sound.volume = 0.5;
+    sound.playbackRate = 0.9 + Math.random() * 0.2;
+    sound.play();
+}
+
+// ---------------- TYPE LOG ----------------
+function typeLog(){
+    if(index < logContent.length){
+        let output = logContent.slice(0,index);
+
+        if(Math.random()<corruptionChance){
+            output += `<span class="corrupt">${random(corruptChars)}</span>`;
+            triggerGlitch();
+        }
+
+        if(index>ALERT_UNLOCK_INDEX && Math.random()<alertChance){
+            if(Math.random()<0.2) insertAlert(cameraAlert);
+            else insertAlert(random(entityAlerts)());
+        }
+
+        target.innerHTML = output + '<span class="cursor"></span>';
+
+        playTypeSound();
+
+        index++;
+        setTimeout(typeLog,speed);
+    } else {
+        target.innerHTML = logContent;
+    }
+}
+
+// ---------------- START ON CLICK ----------------
+startOverlay.addEventListener("click", () => {
+    startOverlay.style.display = "none";
+    typeLog();
+});
+</script>
+
+</body>
+</html>

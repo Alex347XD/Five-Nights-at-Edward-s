@@ -54,6 +54,27 @@
             gap: 15px;
         }
 
+	.about-button {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: #fff;
+            background: #222;
+            border: 1px solid #555;
+            border-radius: 6px;
+            z-index: 1000;
+            transition: background 0.15s ease, transform 0.15s ease;
+        }
+
+        .about-button:hover {
+            background: #b00000;
+            transform: translateY(-1px);
+        }
+
         a.button {
             display: block;
             padding: 14px;
@@ -88,6 +109,7 @@
     </style>
 </head>
 <body>
+    <a href="about.html" class="about-button">About</a>
     <div class="container">
         <h1>Five Nights at Edward's</h1>
         <p>
