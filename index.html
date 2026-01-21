@@ -90,6 +90,14 @@
             color: #fff;
         }
 
+	#versionText {
+            display: block;         /* makes it appear below the main text */
+            font-size: 10px;        /* smaller than button text */
+            color: #ccc;            /* subtle color */
+            font-style: italic;
+            margin-top: 2px;        /* space below "Play Now" */
+        }  
+
         .download {
             background: #222;
             color: #fff;
@@ -106,6 +114,13 @@
             font-size: 0.85rem;
             color: #888;
         }
+
+	#footerVersion {
+    	    position: static; /* or just remove position */
+    	    font-size: 0.75rem;
+    	    color: #888;
+    	    margin-left: 8px;
+	}
     </style>
 </head>
 <body>
@@ -119,7 +134,10 @@
 
         <div class="buttons">
    	    <!-- Direct links from your site -->
-            <a class="button play" href="play.html">▶ Play Now</a>
+            <a class="button play" href="play.html">▶ Play Now
+	        <span id="versionText"></span> <!-- version appears here -->
+	    </a>
+
 
             <a class="button download" href="downloads/Five Nights at Edward's.exe" download>🖥️ Download for PC</a>
             <a class="button download" href="downloads/Five Nights at Edward's.apk" download>📱 Download for Android</a>
@@ -127,7 +145,11 @@
 	</div>
 
         <footer>
-            © 2026 Edward's Province • Fan-made FNaF game
+            © 2025-2026 Edward's Province. All rights reserved. • Fan-made FNaF game
+	    <br>
+            <a style="color:#888;">Original Five Nights at Freddy's by Scott Cawthon</a>
+	    <br>
+	    <span id="footerVersion"></span>
         </footer>
     </div>
 
@@ -147,6 +169,20 @@
                 }
             });
         }
+
+        const currentVersion = "0.5.1";
+        const buildVersion = "0.5.1"; 
+
+        const versionText = document.getElementById("versionText");
+
+	if (buildVersion !== currentVersion) {
+            versionText.textContent = `*Version ${buildVersion}`;
+	} else {
+            versionText.textContent = "";
+	}
+
+	const footerVersion = document.getElementById("footerVersion");
+	footerVersion.textContent = `V${currentVersion}`;
 
         highlightPlatform();
     </script>
