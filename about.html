@@ -764,6 +764,8 @@ function startResolve(alert){
                 popup.style.top = "-120px";
                 flashOverlay.style.opacity = 0;
                 resolveBox.style.animation = "none";
+                resolveBox.style.opacity = 0;
+		popup.style.opacity = 0;
 
                 typingPaused = false; // resume typing AFTER delay
             }, 800); // ← delay after bar completes
