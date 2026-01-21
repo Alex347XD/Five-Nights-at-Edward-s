@@ -555,7 +555,24 @@ const entityAlerts = [
     { text: "⚠ ENTITY MOVED: BUSINESS EDWARD\nPAYMENT METER LOW", resolve: "Pay Employee" }
 ];
 
-const cameraAlert = { text: "⚠ CAMERA 03 DISCONNECTED\nSIGNAL LOST", resolve: "Restore the Signal" };
+const cameraAlerts = [
+    { 
+        text: "⚠ CAMERA 01 (HELL)\nFIRE EFFECTS FLICKERING\nSMOKE DETECTED IN CORRIDORS", 
+        resolve: "Check Fire Suppression" 
+    },
+    { 
+        text: "⚠ CAMERA 02 (MOUNTAIN)\nROCK SLIDE TRIGGERED\nDEBRIS BLOCKING PATHS", 
+        resolve: "Clear Mountain Debris" 
+    },
+    { 
+        text: "⚠ CAMERA 03 (FOREST)\nTREES SWAY WITHOUT WIND\nUNIDENTIFIED MOVEMENTS IN UNDERBRUSH", 
+        resolve: "Inspect Forest" 
+    },
+    { 
+        text: "⚠ CAMERA 04 (DINOSAUR EXHIBIT)\nEXHIBIT LIGHTS FLICKERING\nANCIENT MACHINERY STIRRING", 
+        resolve: "Reset Exhibit Systems" 
+    }
+];
 const corruptChars = ["#", "%", "@", "█", "?", "&"];
 
 const target = document.getElementById("logText");
