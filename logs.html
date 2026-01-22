@@ -234,6 +234,7 @@ body {
 <audio id="typeSound" src="resources/type.mp3" preload="auto"></audio>
 <audio id="glitchSound" src="resources/glitch.mp3" preload="auto"></audio>
 <audio id="resolveSound" src="resources/resolve.mp3" preload="auto"></audio>
+<audio id="alertSound" src="resources/alert.mp3" preload="auto"></audio>
 
 <!-- RED FLASH OVERLAY -->
 <div id="flashOverlay" style="
@@ -612,6 +613,8 @@ const target = document.getElementById("logText");
 const overlay = document.getElementById("alertOverlay");
 const typeSound = document.getElementById("typeSound");
 const glitchSound = document.getElementById("glitchSound");
+const alertSound = document.getElementById("alertSound");
+const resolveSound = document.getElementById("resolveSound");
 const startOverlay = document.getElementById("startOverlay");
 const skipButton = document.getElementById("skipButton");
 const nextNight = document.getElementById("nextNight");
@@ -660,7 +663,12 @@ function showAlert(alert){
     resolveBox.style.opacity = 1;
     typingPaused = true;
     currentAlert = alert; // save for when button clicked
-    popup.style.opacity = 1; 
+    popup.style.opacity = 1;
+
+    if(!muted){
+        alertSound.currentTime = 0;
+        alertSound.play().catch(()=>{});
+    }
 
     popupText.innerText = alert.text;
     resolveBox.innerText = alert.resolve; // button text is alert.resolve
