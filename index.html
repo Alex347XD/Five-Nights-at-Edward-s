@@ -198,14 +198,14 @@
 
         const versionText = document.getElementById("versionText");
 
-	if (buildVersion !== currentVersion) {
+	    if (buildVersion !== currentVersion) {
             versionText.textContent = `*Version ${buildVersion}`;
-	} else {
+	    } else {
             versionText.textContent = "";
-	}
+	    }
 
-	const footerVersion = document.getElementById("footerVersion");
-	footerVersion.textContent = `V${currentVersion}`;
+	    const footerVersion = document.getElementById("footerVersion");
+	    footerVersion.textContent = `V${currentVersion}`;
 
         highlightPlatform();
     </script>
