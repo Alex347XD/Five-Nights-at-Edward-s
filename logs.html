@@ -648,6 +648,7 @@ function triggerGlitch(){
 }
 
 function playType(){
+	if (muted) return;
     if(!muted){
         const sound = typeSound.cloneNode();
         sound.volume = 0.5;
@@ -819,8 +820,22 @@ nextNight.addEventListener("click", (e) => {
     typeLog();
 });
 
-muteButton.addEventListener("click",()=>{
+const allSounds = [typeSound, glitchSound, alertSound, resolveSound];
+
+function stopAllSounds() {
+    allSounds.forEach(sound => {
+        sound.pause();
+        sound.currentTime = 0;
+    });
+}
+
+muteButton.addEventListener("pointerdown", () => {
     muted = !muted;
+
+    if (muted) {
+        stopAllSounds();
+    }
+
     muteButton.innerText = muted ? "Unmute" : "Mute";
 });
 
