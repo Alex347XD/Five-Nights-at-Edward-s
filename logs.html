@@ -842,8 +842,8 @@ muteButton.addEventListener("pointerdown", () => {
 resolveBox.addEventListener("click", () => {
     if (!currentAlert) return;
 
-    resolveBox.style.display = "none"; // hide button while bar runs
-    startResolve(currentAlert); // start the progress bar
+    resolveBox.style.display = "none";
+    startResolve(currentAlert);
     currentAlert = null;
 });
 

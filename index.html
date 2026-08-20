@@ -78,7 +78,7 @@
         .about-button {
             position: fixed;
             top: 15px;
-            left: 75px; /* pushes it to the right of Logs */
+            left: 75px;
             padding: 8px 12px;
             font-size: 0.85rem;
             font-weight: bold;
@@ -112,11 +112,11 @@
         }
 
 	#versionText {
-            display: block;         /* makes it appear below the main text */
-            font-size: 10px;        /* smaller than button text */
-            color: #ccc;            /* subtle color */
+            display: block;         
+            font-size: 10px;        
+            color: #ccc;            
             font-style: italic;
-            margin-top: 2px;        /* space below "Play Now" */
+            margin-top: 2px;       
         }  
 
         .download {
@@ -137,7 +137,7 @@
         }
 
 	#footerVersion {
-    	    position: static; /* or just remove position */
+    	    position: static;
     	    font-size: 0.75rem;
     	    color: #888;
     	    margin-left: 8px;
@@ -156,13 +156,12 @@
         </p>
 
         <div class="buttons">
-   	    <!-- Direct links from your site -->
             <a class="button play" href="play.html">▶ Play Now
 	        <span id="versionText"></span> <!-- version appears here -->
 	    </a>
 
 
-            <a class="button download" href="downloads/Five Nights at Edward's.exe" download>🖥️ Download for PC</a>
+            <a class="button download" href="downloads/Five Nights at Edward's.exe" download>🖥️ Download for Windows</a>
             <a class="button download" href="downloads/Five Nights at Edward's.apk" download>📱 Download for Android</a>
             <a class="button download" href="downloads/Five Nights at Edward's.ipa" download>🍎 Download for iOS</a>
 	</div>
@@ -193,8 +192,8 @@
             });
         }
 
-        const currentVersion = "0.5.1";
-        const buildVersion = "0.5.1"; 
+        const currentVersion = "0.5.2";
+        const buildVersion = "0.5.2"; 
 
         const versionText = document.getElementById("versionText");
 
