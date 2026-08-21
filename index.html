@@ -157,7 +157,7 @@
 
         <div class="buttons">
             <a class="button play" href="play.html">▶ Play Now
-	        <span id="versionText"></span> <!-- version appears here -->
+	        <span id="versionText"></span>
 	    </a>
 
 
@@ -185,7 +185,7 @@
             buttons.forEach(btn => {
                 if ((isAndroid && btn.textContent.includes('Android')) ||
                     (isIOS && btn.textContent.includes('iOS')) ||
-                    (!isAndroid && !isIOS && btn.textContent.includes('PC'))) {
+                    (!isAndroid && !isIOS && btn.textContent.includes('Windows'))) {
                     btn.style.border = '2px solid #b00000';
                     btn.style.boxShadow = '0 0 12px rgba(176, 0, 0, 0.8)';
                 }
