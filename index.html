@@ -1,18 +1,21 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Five Nights at Edward's</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png" />
-    
-    <!-- Optional: different sizes -->
     <link rel="icon" sizes="32x32" href="favicon-32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png" />
 
     <style>
+
         body {
             margin: 0;
             font-family: Arial, Helvetica, sans-serif;
@@ -54,10 +57,13 @@
             gap: 15px;
         }
 
-	.logs-button {
+        /* Top navigation buttons */
+
+        .logs-button,
+        .about-button,
+        .guide-button {
             position: fixed;
             top: 15px;
-            left: 15px;
             padding: 8px 12px;
             font-size: 0.85rem;
             font-weight: bold;
@@ -70,28 +76,21 @@
             transition: background 0.15s ease, transform 0.15s ease;
         }
 
-        .logs-button:hover {
-            background: #b00000;
-            transform: translateY(-1px);
+        .logs-button {
+            left: 15px;
         }
 
         .about-button {
-            position: fixed;
-            top: 15px;
             left: 75px;
-            padding: 8px 12px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            text-decoration: none;
-            color: #fff;
-            background: #222;
-            border: 1px solid #555;
-            border-radius: 6px;
-            z-index: 1000;
-            transition: background 0.15s ease, transform 0.15s ease;
         }
 
-        .about-button:hover {
+        .guide-button {
+            left: 140px;
+        }
+
+        .logs-button:hover,
+        .about-button:hover,
+        .guide-button:hover {
             background: #b00000;
             transform: translateY(-1px);
         }
@@ -111,13 +110,13 @@
             color: #fff;
         }
 
-	#versionText {
-            display: block;         
-            font-size: 10px;        
-            color: #ccc;            
+        #versionText {
+            display: block;
+            font-size: 10px;
+            color: #ccc;
             font-style: italic;
-            margin-top: 2px;       
-        }  
+            margin-top: 2px;
+        }
 
         .download {
             background: #222;
@@ -136,77 +135,125 @@
             color: #888;
         }
 
-	#footerVersion {
-    	    position: static;
-    	    font-size: 0.75rem;
-    	    color: #888;
-    	    margin-left: 8px;
-	}
+        #footerVersion {
+            position: static;
+            font-size: 0.75rem;
+            color: #888;
+            margin-left: 8px;
+        }
+
     </style>
+
 </head>
+
 <body>
-<body>
+
     <a href="logs.html" class="logs-button">Logs</a>
+
     <a href="about.html" class="about-button">About</a>
+
+    <a href="guide.html" class="guide-button">Guide</a>
+
     <div class="container">
+
         <h1>Five Nights at Edward's</h1>
+
         <p>
             Welcome to <strong>Five Nights at Edward's</strong>.
             Download or play the latest version of the game.
         </p>
 
         <div class="buttons">
-            <a class="button play" href="play.html">▶ Play Now
-	        <span id="versionText"></span>
-	    </a>
 
+            <a class="button play" href="play.html">
+                ▶ Play Now
+                <span id="versionText"></span>
+            </a>
 
-            <a class="button download" href="downloads/Five Nights at Edward's.exe" download>🖥️ Download for Windows</a>
-            <a class="button download" href="downloads/Five Nights at Edward's.apk" download>📱 Download for Android</a>
-            <a class="button download" href="downloads/Five Nights at Edward's.ipa" download>🍎 Download for iOS</a>
-	</div>
+            <a class="button download" href="downloads/Five Nights at Edward's.exe" download>
+                🖥️ Download for Windows
+            </a>
+
+            <a class="button download" href="downloads/Five Nights at Edward's.apk" download>
+                📱 Download for Android
+            </a>
+
+            <a class="button download" href="downloads/Five Nights at Edward's.ipa" download>
+                🍎 Download for iOS
+            </a>
+
+        </div>
 
         <footer>
             © 2024-2026 Edward's Province • Fan-made FNaF game
-	    <br>
-            <a style="color:#888;">Original Five Nights at Freddy's by Scott Cawthon</a>
-	    <br>
-	    <span id="footerVersion"></span>
+            <br>
+            <a style="color:#888;">
+                Original Five Nights at Freddy's by Scott Cawthon
+            </a>
+            <br>
+            <span id="footerVersion"></span>
         </footer>
+
     </div>
 
     <script>
+
         function highlightPlatform() {
+
             const ua = navigator.userAgent;
+
             const isAndroid = /Android/i.test(ua);
             const isIOS = /iPhone|iPad|iPod/i.test(ua);
+
             const buttons = document.querySelectorAll('.button.download');
 
             buttons.forEach(btn => {
-                if ((isAndroid && btn.textContent.includes('Android')) ||
+
+                if (
+                    (isAndroid && btn.textContent.includes('Android')) ||
                     (isIOS && btn.textContent.includes('iOS')) ||
-                    (!isAndroid && !isIOS && btn.textContent.includes('Windows'))) {
+                    (!isAndroid && !isIOS && btn.textContent.includes('Windows'))
+                ) {
+
                     btn.style.border = '2px solid #b00000';
-                    btn.style.boxShadow = '0 0 12px rgba(176, 0, 0, 0.8)';
+
+                    btn.style.boxShadow =
+                        '0 0 12px rgba(176, 0, 0, 0.8)';
+
                 }
+
             });
+
         }
 
         const currentVersion = "1.0.0";
-        const buildVersion = "1.0.0"; 
 
-        const versionText = document.getElementById("versionText");
+        const buildVersion = "1.0.0";
 
-	    if (buildVersion !== currentVersion) {
-            versionText.textContent = `*Version ${buildVersion}`;
-	    } else {
+        const versionText =
+            document.getElementById("versionText");
+
+        if (buildVersion !== currentVersion) {
+
+            versionText.textContent =
+                `*Version ${buildVersion}`;
+
+        } else {
+
             versionText.textContent = "";
-	    }
 
-	    const footerVersion = document.getElementById("footerVersion");
-	    footerVersion.textContent = `V${currentVersion}`;
+        }
+
+        const footerVersion =
+            document.getElementById("footerVersion");
+
+        footerVersion.textContent =
+            `V${currentVersion}`;
 
         highlightPlatform();
+
     </script>
+
 </body>
+
 </html>

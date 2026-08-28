@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Five Nights at Edward's - Game Guide</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="icon" sizes="32x32" href="favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png" />
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #000;
+            color: #f2f2f2;
+            min-height: 100vh;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        #pdf-pages {
+            position: fixed;
+            inset: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 70px 20px 40px;
+            box-sizing: border-box;
+            background: radial-gradient(circle at top, #1a1a1a, #000);
+        }
+
+        .pdf-page {
+            display: block;
+            width: min(900px, 100%);
+            height: auto;
+            margin: 0 auto 20px;
+            background: #fff;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.75);
+        }
+
+        /* =========================
+           TOP NAVIGATION BUTTONS
+           ========================= */
+
+        .top-button {
+            position: fixed;
+            top: 15px;
+
+            padding: 8px 12px;
+
+            font-size: 0.85rem;
+            font-weight: bold;
+
+            text-decoration: none;
+            color: #fff;
+
+            background: #222;
+            border: 1px solid #555;
+            border-radius: 6px;
+
+            z-index: 1000;
+
+            transition:
+                background 0.15s ease,
+                transform 0.15s ease;
+        }
+
+        .top-button:hover {
+            background: #b00000;
+            transform: translateY(-1px);
+        }
+
+        .logs-button {
+            left: 15px;
+        }
+
+        .home-button {
+            left: 75px;
+        }
+
+        .play-button {
+            left: 140px;
+        }
+
+        /* =========================
+           MAIN CONTAINER
+           ========================= */
+
+        .container {
+            width: 100vw;
+            height: 100vh;
+            padding: 0;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        /* =========================
+           TITLE
+           ========================= */
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 8px;
+
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+
+            font-size: 1.2rem;
+            color: #ffb3b3;
+            font-weight: normal;
+        }
+
+        /* =========================
+           PDF VIEWER
+           ========================= */
+
+        .pdf-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .pdf-viewer { display: none; }
+
+        /* =========================
+           FALLBACK MESSAGE
+           ========================= */
+
+        .pdf-fallback { display: none; }
+
+        .pdf-fallback a {
+            color: #ff7777;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .pdf-fallback a:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================
+           RETURN BUTTON
+           ========================= */
+
+        .return-button {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            margin: 0;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: #fff;
+            background: #b00000;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 1000;
+            opacity: 0.9;
+            transition: background 0.15s ease, opacity 0.15s ease;
+        }
+
+        .return-button:hover {
+            transform: translateX(-50%);
+            background: #d00000;
+            opacity: 1;
+        }
+
+        /* =========================
+           FOOTER
+           ========================= */
+
+        footer {
+            display: none;
+        }
+
+        /* =========================
+           MOBILE
+           ========================= */
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 0;
+            }
+
+            .container {
+                width: 100vw;
+                height: 100vh;
+                padding: 0;
+            }
+
+            h1 {
+                font-size: 1.7rem;
+            }
+
+            h2 {
+                font-size: 1rem;
+            }
+
+            .pdf-viewer {
+                width: 100vw;
+                height: 100vh;
+            }
+
+            .top-button {
+                font-size: 0.75rem;
+                padding: 7px 9px;
+            }
+
+            .logs-button {
+                left: 8px;
+            }
+
+            .home-button {
+                left: 62px;
+            }
+
+            .play-button {
+                left: 120px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         TOP NAVIGATION
+         ========================= -->
+
+    <a href="logs.html" class="top-button logs-button">
+        Logs
+    </a>
+
+    <a href="index.html" class="top-button home-button">
+        Home
+    </a>
+
+    <a href="play.html" class="top-button play-button">
+        Play
+    </a>
+
+
+    <!-- =========================
+         MAIN CONTENT
+         ========================= -->
+
+    <div class="container">
+
+        <div class="pdf-container">
+
+            <div id="pdf-pages"></div>
+
+            <canvas id="pdf-render-source" style="display:none;"></canvas>
+
+
+            <!-- Fallback -->
+
+            <div class="pdf-fallback">
+                Having trouble viewing the guide?
+                <a href="guide.pdf" target="_blank">
+                    Open the PDF in a new tab
+                </a>.
+            </div>
+
+
+            <!-- Return Button -->
+
+            <a href="index.html" class="return-button">
+                ← Back to Home
+            </a>
+
+        </div>
+
+
+        <!-- =========================
+             FOOTER
+             ========================= -->
+
+        <footer>
+            © 2024–2026 Edward's Province
+            <br>
+            Original Five Nights at Freddy's by Scott Cawthon
+        </footer>
+
+    </div>
+
+    <script src="pdfjs/pdf.min.js"></script>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+            'pdfjs/pdf.worker.min.js';
+
+        const pdfPages = document.getElementById('pdf-pages');
+
+        async function loadPDF() {
+            try {
+                const loadingTask = pdfjsLib.getDocument({
+                    url: 'guide.pdf'
+                });
+
+                const pdf = await loadingTask.promise;
+
+                for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+                    const page = await pdf.getPage(pageNumber);
+
+                    const baseViewport = page.getViewport({ scale: 1 });
+                    const maxWidth = Math.min(900, window.innerWidth - 40);
+                    const scale = maxWidth / baseViewport.width;
+                    const viewport = page.getViewport({ scale });
+
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+
+                    canvas.className = 'pdf-page';
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    pdfPages.appendChild(canvas);
+
+                    await page.render({
+                        canvasContext: context,
+                        viewport: viewport
+                    }).promise;
+                }
+            } catch (error) {
+                console.error('Unable to load PDF:', error);
+                pdfPages.innerHTML = `
+                    <div style="color:#fff;text-align:center;padding:40px;">
+                        Unable to display the guide.<br><br>
+                        <a href="guide.pdf" target="_blank" style="color:#ff7777;font-weight:bold;">
+                            Open the PDF
+                        </a>
+                    </div>`;
+            }
+        }
+
+        loadPDF();
+    </script>
+
+</body>
+
+</html>

@@ -1,9 +1,13 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Five Nights at Edward's</title>
+
+    <title>Five Nights at Edward's - About</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png" />
@@ -11,6 +15,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png" />
 
     <style>
+
         body {
             margin: 0;
             font-family: Arial, Helvetica, sans-serif;
@@ -71,11 +76,24 @@
             transform: translateY(-1px);
         }
 
-        .logs-button { left: 15px; }
-        .home-button { left: 75px; }
-        .play-button { left: 140px; }
+        .logs-button {
+            left: 15px;
+        }
+
+        .home-button {
+            left: 75px;
+        }
+
+        .play-button {
+            left: 140px;
+        }
+
+        .guide-button {
+            left: 205px;
+        }
 
         /* Changelog styles */
+
         .changelog {
             margin-top: 30px;
             background: rgba(40, 0, 0, 0.5);
@@ -102,6 +120,7 @@
         }
 
         /* Credits styles */
+
         .credits {
             margin-top: 20px;
             padding: 15px;
@@ -121,6 +140,7 @@
         }
 
         /* Return button styles */
+
         .return-button {
             margin-top: 20px;
             display: inline-block;
@@ -147,16 +167,25 @@
             font-size: 0.8rem;
             color: #888;
         }
+
     </style>
+
 </head>
+
 <body>
 
     <a href="logs.html" class="top-button logs-button">Logs</a>
+
     <a href="index.html" class="top-button home-button">Home</a>
+
     <a href="play.html" class="top-button play-button">Play</a>
 
+    <a href="guide.html" class="top-button guide-button">Guide</a>
+
     <div class="container">
+
         <h1>About the Game</h1>
+
         <p>
             <strong>Five Nights at Edward's</strong> is a fan-made survival horror game
             inspired by the mechanics and atmosphere of classic Five Nights-style games.
@@ -165,12 +194,14 @@
         </p>
 
         <h2>What Makes It Different?</h2>
+
         <p>
             Unlike other projects, this experience centers on our original characters and Roblox UGC series:
             Edward the Devil, NomNom the Dino, Big the Boulder, and Smiley the Clown, giving fans a unique world and story you won’t find anywhere else.
         </p>
 
         <h2>Development</h2>
+
         <p>
             The game is actively developed and updated with new features,
             balance changes, and polishes over time.
@@ -178,6 +209,7 @@
         </p>
 
         <h2>Disclaimer</h2>
+
         <p>
             This is a <strong>fan-made project</strong> and is not affiliated with or
             endorsed by Scott Cawthon or the official
@@ -185,43 +217,81 @@
         </p>
 
         <div class="changelog">
+
             <h3>📝 Changelog (click to expand)</h3>
+
             <ul>
                 <li>V1.0.0 – Full release – Balance changes, and reworked visuals.</li>
                 <li>V0.5.2 – Title animation updated.</li>
                 <li>V0.5.1 – Visual changes and minor bug fixes.</li>
                 <li>V0.5.0 – Initial Early Access Release.</li>
             </ul>
+
         </div>
 
         <div class="credits">
+
             <h3>🎮 Credits</h3>
+
             <p>
-                Owned by: <a href="https://www.roblox.com/users/340352163/profile" target="_blank">Alex347_XD</a><br>
-                Roblox UGC group: <a href="https://www.roblox.com/communities/34877381/Edward-s-Province" target="_blank">Edward's Province</a><br>
-                Game artist: <a href="https://www.roblox.com/users/1820010987/profile" target="_blank">Its_Galaxy</a><br>
+                Owned by:
+                <a href="https://www.roblox.com/users/340352163/profile" target="_blank">
+                    Alex347_XD
+                </a>
+                <br>
+
+                Roblox UGC group:
+                <a href="https://www.roblox.com/communities/34877381/Edward-s-Province" target="_blank">
+                    Edward's Province
+                </a>
+                <br>
+
+                Game artist:
+                <a href="https://www.roblox.com/users/1820010987/profile" target="_blank">
+                    Its_Galaxy
+                </a>
+                <br>
+
                 Original FNaF by Scott Cawthon
             </p>
+
         </div>
 
         <footer>
-            © 2024–2026 Edward's Province  
+            © 2024–2026 Edward's Province
             <br>
             Original Five Nights at Freddy's by Scott Cawthon
         </footer>
+
     </div>
 
     <script>
-        const changelogHeader = document.querySelector('.changelog h3');
-        const changelogList = document.querySelector('.changelog ul');
+
+        const changelogHeader =
+            document.querySelector('.changelog h3');
+
+        const changelogList =
+            document.querySelector('.changelog ul');
 
         changelogHeader.addEventListener('click', () => {
-            if (changelogList.style.display === "none" || changelogList.style.display === "") {
+
+            if (
+                changelogList.style.display === "none" ||
+                changelogList.style.display === ""
+            ) {
+
                 changelogList.style.display = "block";
+
             } else {
+
                 changelogList.style.display = "none";
+
             }
+
         });
+
     </script>
+
 </body>
+
 </html>
