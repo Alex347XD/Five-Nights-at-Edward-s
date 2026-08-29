@@ -110,12 +110,15 @@
             color: #fff;
         }
 
-        #versionText {
+        /* Version text under every button */
+
+        .versionText {
             display: block;
             font-size: 10px;
             color: #ccc;
             font-style: italic;
             margin-top: 2px;
+            font-weight: normal;
         }
 
         .download {
@@ -136,10 +139,26 @@
         }
 
         #footerVersion {
-            position: static;
             font-size: 0.75rem;
             color: #888;
             margin-left: 8px;
+        }
+
+        /* Device update warning */
+
+        #updateWarning {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            text-align: center;
+            color: #ff4444;
+            font-weight: bold;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px rgba(255, 0, 0, 0.7);
+            z-index: 1000;
         }
 
     </style>
@@ -149,9 +168,7 @@
 <body>
 
     <a href="logs.html" class="logs-button">Logs</a>
-
     <a href="about.html" class="about-button">About</a>
-
     <a href="guide.html" class="guide-button">Guide</a>
 
     <div class="container">
@@ -165,21 +182,38 @@
 
         <div class="buttons">
 
+            <!-- Web version always uses otherVersion -->
+
             <a class="button play" href="play.html">
                 ▶ Play Now
-                <span id="versionText"></span>
+                <span class="versionText" id="playVersion"></span>
             </a>
 
-            <a class="button download" href="downloads/Five Nights at Edward's.exe" download>
+            <!-- Windows -->
+
+            <a class="button download"
+               href="downloads/Five Nights at Edward's.exe"
+               download>
                 🖥️ Download for Windows
+                <span class="versionText" id="windowsVersionText"></span>
             </a>
 
-            <a class="button download" href="downloads/Five Nights at Edward's.apk" download>
+            <!-- Android -->
+
+            <a class="button download"
+               href="downloads/Five Nights at Edward's.apk"
+               download>
                 📱 Download for Android
+                <span class="versionText" id="androidVersionText"></span>
             </a>
 
-            <a class="button download" href="downloads/Five Nights at Edward's.ipa" download>
+            <!-- iOS -->
+
+            <a class="button download"
+               href="downloads/Five Nights at Edward's.ipa"
+               download>
                 🍎 Download for iOS
+                <span class="versionText" id="iosVersionText"></span>
             </a>
 
         </div>
@@ -191,31 +225,117 @@
                 Original Five Nights at Freddy's by Scott Cawthon
             </a>
             <br>
-            <span id="footerVersion"></span>
         </footer>
 
     </div>
 
+    <!-- Outdated device warning -->
+
+    <div id="updateWarning" style="display: none;">
+        THE GAME IS NOT YET UPDATED TO THE LATEST VERSION FOR YOUR DEVICE
+    </div>
+
+
     <script>
+
+        // ==========================================
+        // VERSION NUMBERS
+        // ==========================================
+
+        // Windows / main version
+        const windowsVersion = "1.0.0";
+
+        // Web, Android, iOS, etc.
+        const otherVersion = "1.0.0";
+
+
+        // ==========================================
+        // SHOW VERSION UNDER EACH BUTTON
+        // ==========================================
+
+        // Play.html is always the web/non-Windows version
+        document.getElementById("playVersion").textContent =
+            `Version ${otherVersion}`;
+
+        // Windows gets the main version
+        document.getElementById("windowsVersionText").textContent =
+            `Version ${windowsVersion}`;
+
+        // Android uses the other version
+        document.getElementById("androidVersionText").textContent =
+            `Version ${otherVersion}`;
+
+        // iOS uses the other version
+        document.getElementById("iosVersionText").textContent =
+            `Version ${otherVersion}`;
+
+
+        // ==========================================
+        // PLATFORM DETECTION
+        // ==========================================
+
+        const ua = navigator.userAgent;
+
+        const isWindows = /Windows/i.test(ua);
+        const isAndroid = /Android/i.test(ua);
+        const isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+
+        // ==========================================
+        // FOOTER VERSION
+        // Shows the version relevant to the device
+        // ==========================================
+
+        const deviceVersion = isWindows
+            ? windowsVersion
+            : otherVersion;
+
+        document.getElementById("footerVersion").textContent =
+            `V${deviceVersion}`;
+
+
+        // ==========================================
+        // OUTDATED DEVICE WARNING
+        //
+        // Shows on non-Windows devices when their
+        // version is behind the Windows version.
+        // ==========================================
+
+        const updateWarning =
+            document.getElementById("updateWarning");
+
+        if (!isWindows && otherVersion !== windowsVersion) {
+
+            updateWarning.style.display = "block";
+
+        }
+
+
+        // ==========================================
+        // HIGHLIGHT CORRECT DOWNLOAD
+        // ==========================================
 
         function highlightPlatform() {
 
-            const ua = navigator.userAgent;
-
-            const isAndroid = /Android/i.test(ua);
-            const isIOS = /iPhone|iPad|iPod/i.test(ua);
-
-            const buttons = document.querySelectorAll('.button.download');
+            const buttons =
+                document.querySelectorAll('.button.download');
 
             buttons.forEach(btn => {
 
                 if (
-                    (isAndroid && btn.textContent.includes('Android')) ||
-                    (isIOS && btn.textContent.includes('iOS')) ||
-                    (!isAndroid && !isIOS && btn.textContent.includes('Windows'))
+                    (isAndroid &&
+                        btn.textContent.includes('Android')) ||
+
+                    (isIOS &&
+                        btn.textContent.includes('iOS')) ||
+
+                    (!isAndroid &&
+                        !isIOS &&
+                        btn.textContent.includes('Windows'))
                 ) {
 
-                    btn.style.border = '2px solid #b00000';
+                    btn.style.border =
+                        '2px solid #b00000';
 
                     btn.style.boxShadow =
                         '0 0 12px rgba(176, 0, 0, 0.8)';
@@ -226,29 +346,6 @@
 
         }
 
-        const currentVersion = "1.0.0";
-
-        const buildVersion = "1.0.0";
-
-        const versionText =
-            document.getElementById("versionText");
-
-        if (buildVersion !== currentVersion) {
-
-            versionText.textContent =
-                `*Version ${buildVersion}`;
-
-        } else {
-
-            versionText.textContent = "";
-
-        }
-
-        const footerVersion =
-            document.getElementById("footerVersion");
-
-        footerVersion.textContent =
-            `V${currentVersion}`;
 
         highlightPlatform();
 
