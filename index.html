@@ -95,6 +95,8 @@
             transform: translateY(-1px);
         }
 
+        /* Main buttons */
+
         a.button {
             display: block;
             padding: 14px;
@@ -110,7 +112,13 @@
             color: #fff;
         }
 
-        /* Version text under every button */
+        .download {
+            background: #222;
+            color: #fff;
+            border: 1px solid #555;
+        }
+
+        /* Version text under buttons */
 
         .versionText {
             display: block;
@@ -121,27 +129,9 @@
             font-weight: normal;
         }
 
-        .download {
-            background: #222;
-            color: #fff;
-            border: 1px solid #555;
-        }
-
         a.button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
-        }
-
-        footer {
-            margin-top: 25px;
-            font-size: 0.85rem;
-            color: #888;
-        }
-
-        #footerVersion {
-            font-size: 0.75rem;
-            color: #888;
-            margin-left: 8px;
         }
 
         /* Device update warning */
@@ -167,9 +157,14 @@
 
 <body>
 
+    <!-- Navigation -->
+
     <a href="logs.html" class="logs-button">Logs</a>
     <a href="about.html" class="about-button">About</a>
     <a href="guide.html" class="guide-button">Guide</a>
+
+
+    <!-- Main container -->
 
     <div class="container">
 
@@ -180,59 +175,71 @@
             Download or play the latest version of the game.
         </p>
 
+
+        <!-- Buttons -->
+
         <div class="buttons">
 
-            <!-- Web version always uses otherVersion -->
+            <!-- Web version -->
 
             <a class="button play" href="play.html">
+
                 ▶ Play Now
+
                 <span class="versionText" id="playVersion"></span>
+
             </a>
+
 
             <!-- Windows -->
 
             <a class="button download"
                href="downloads/Five Nights at Edward's.exe"
                download>
+
                 🖥️ Download for Windows
+
                 <span class="versionText" id="windowsVersionText"></span>
+
             </a>
+
 
             <!-- Android -->
 
             <a class="button download"
                href="downloads/Five Nights at Edward's.apk"
                download>
+
                 📱 Download for Android
+
                 <span class="versionText" id="androidVersionText"></span>
+
             </a>
+
 
             <!-- iOS -->
 
             <a class="button download"
                href="downloads/Five Nights at Edward's.ipa"
                download>
+
                 🍎 Download for iOS
+
                 <span class="versionText" id="iosVersionText"></span>
+
             </a>
 
         </div>
 
-        <footer>
-            © 2024-2026 Edward's Province • Fan-made FNaF game
-            <br>
-            <a style="color:#888;">
-                Original Five Nights at Freddy's by Scott Cawthon
-            </a>
-            <br>
-        </footer>
-
     </div>
 
-    <!-- Outdated device warning -->
+
+    <!-- Update warning -->
 
     <div id="updateWarning" style="display: none;">
+
         THE GAME IS NOT YET UPDATED TO THE LATEST VERSION FOR YOUR DEVICE
+
     </div>
 
 
@@ -242,10 +249,10 @@
         // VERSION NUMBERS
         // ==========================================
 
-        // Windows / main version
+        // Main Windows version
         const windowsVersion = "0.5.2";
 
-        // Web, Android, iOS, etc.
+        // Web, Android, iOS, and other platforms
         const otherVersion = "0.5.1";
 
 
@@ -253,17 +260,20 @@
         // SHOW VERSION UNDER EACH BUTTON
         // ==========================================
 
-        // Play.html is always the web/non-Windows version
+        // Play.html always uses the web version
         document.getElementById("playVersion").textContent =
             `Version ${otherVersion}`;
 
-        // Windows gets the main version
+
+        // Windows uses the main version
         document.getElementById("windowsVersionText").textContent =
             `Version ${windowsVersion}`;
+
 
         // Android uses the other version
         document.getElementById("androidVersionText").textContent =
             `Version ${otherVersion}`;
+
 
         // iOS uses the other version
         document.getElementById("iosVersionText").textContent =
@@ -282,27 +292,15 @@
 
 
         // ==========================================
-        // FOOTER VERSION
-        // Shows the version relevant to the device
-        // ==========================================
-
-        const deviceVersion = isWindows
-            ? windowsVersion
-            : otherVersion;
-
-        document.getElementById("footerVersion").textContent =
-            `V${deviceVersion}`;
-
-
-        // ==========================================
         // OUTDATED DEVICE WARNING
-        //
-        // Shows on non-Windows devices when their
-        // version is behind the Windows version.
         // ==========================================
 
         const updateWarning =
             document.getElementById("updateWarning");
+
+
+        // Show warning on Android, iOS, and all
+        // other non-Windows platforms if behind.
 
         if (!isWindows && otherVersion !== windowsVersion) {
 
@@ -312,7 +310,7 @@
 
 
         // ==========================================
-        // HIGHLIGHT CORRECT DOWNLOAD
+        // HIGHLIGHT CORRECT DOWNLOAD BUTTON
         // ==========================================
 
         function highlightPlatform() {
@@ -320,18 +318,25 @@
             const buttons =
                 document.querySelectorAll('.button.download');
 
+
             buttons.forEach(btn => {
 
                 if (
+
                     (isAndroid &&
-                        btn.textContent.includes('Android')) ||
+                    btn.textContent.includes('Android'))
+
+                    ||
 
                     (isIOS &&
-                        btn.textContent.includes('iOS')) ||
+                    btn.textContent.includes('iOS'))
+
+                    ||
 
                     (!isAndroid &&
-                        !isIOS &&
-                        btn.textContent.includes('Windows'))
+                    !isIOS &&
+                    btn.textContent.includes('Windows'))
+
                 ) {
 
                     btn.style.border =
