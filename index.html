@@ -60,7 +60,20 @@
         /* Top navigation buttons */
 
         .logs-button,
-        .about-button,
+        .about-button {
+            position: fixed;
+            top: 15px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: #fff;
+            background: #222;
+            border: 1px solid #555;
+            border-radius: 6px;
+            z-index: 1000;
+            transition: background 0.15s ease, transform 0.15s ease;
+        }
 
         .logs-button {
             left: 15px;
@@ -71,7 +84,10 @@
         }
 
         .logs-button:hover,
-        .about-button:hover,
+        .about-button:hover {
+            background: #b00000;
+            transform: translateY(-1px);
+        }
 
         a.button {
             display: block;
