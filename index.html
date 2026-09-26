@@ -210,6 +210,14 @@
                 <span class="versionText" id="iosVersionText"></span>
             </a>
 
+            <!-- Wii U -->
+
+            <a class="button download"
+               href="wiiu.html">
+                🎮 Download for Wii U
+                <span class="versionText" id="wiiUVersionText"></span>
+            </a>
+
         </div>
 
         <footer>
@@ -239,8 +247,11 @@
         // Windows / main version
         const windowsVersion = "1.0.0";
 
-        // Web, Android, iOS, etc.
+        // Web, Android, iOS, Wii U, etc.
         const otherVersion = "1.0.0";
+
+        // Wii U homebrew build (FNaE_U.zip)
+        const wiiUVersion = "1.0.0";
 
 
         // ==========================================
@@ -263,6 +274,10 @@
         document.getElementById("iosVersionText").textContent =
             `Version ${otherVersion}`;
 
+        // Wii U uses its own version (FNaE_U.zip)
+        document.getElementById("wiiUVersionText").textContent =
+            `Version ${wiiUVersion}`;
+
 
         // ==========================================
         // PLATFORM DETECTION
@@ -273,6 +288,7 @@
         const isWindows = /Windows/i.test(ua);
         const isAndroid = /Android/i.test(ua);
         const isIOS = /iPhone|iPad|iPod/i.test(ua);
+        const isWiiU = /Wii ?U|Nintendo/i.test(ua);
 
 
         // ==========================================
@@ -320,8 +336,12 @@
                     (isIOS &&
                         btn.textContent.includes('iOS')) ||
 
+                    (isWiiU &&
+                        btn.textContent.includes('Wii U')) ||
+
                     (!isAndroid &&
                         !isIOS &&
+                        !isWiiU &&
                         btn.textContent.includes('Windows'))
                 ) {
 
