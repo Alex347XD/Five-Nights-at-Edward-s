@@ -142,6 +142,17 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
         }
 
+        .download-alt {
+            background: #b00000;
+            color: #fff;
+            margin-top: 12px;
+        }
+
+        .download-alt:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+        }
+
         .versionText {
             display: block;
             font-size: 10px;
@@ -149,13 +160,6 @@
             font-style: italic;
             margin-top: 2px;
             font-weight: normal;
-        }
-
-        #autoDownloadNote {
-            display: none;
-            margin-top: 12px;
-            font-size: 0.9rem;
-            color: #ff9999;
         }
 
         footer {
@@ -220,27 +224,23 @@
            href="downloads/FNaE_U.zip"
            download
            id="wiiUDownloadButton">
-            🎮 Download for Wii U (.zip)
+            🎮 Download for Wii U (Aroma Homebrew)
             <span class="versionText" id="wiiUVersionText"></span>
         </a>
 
-        <div id="autoDownloadNote">
-            Your download should start automatically. If not, click the button above.
-        </div>
-
-        <div class="guide-section">
-            <h2>📦 What's inside FNaE_U.zip?</h2>
-            <ul>
-                <li>A <code>wiiu</code> folder with the homebrew files for Aroma (real Wii U).</li>
-                <li>A <code>.wuhb</code> file for Cemu.</li>
-            </ul>
-        </div>
+        <a class="button download-alt"
+           href="downloads/FNaE_U.wuhb"
+           download
+           id="wiiUCemuDownloadButton">
+            💻 Download for PC (Cemu Emulator)
+            <span class="versionText" id="wiiUCemuVersionText"></span>
+        </a>
 
         <div class="guide-section">
             <h2>🍥 Option A — Real Wii U (Aroma Homebrew)</h2>
             <p style="text-align:left;">Requirements: a modded Wii U running Aroma, and an SD card (FAT32).</p>
             <ol>
-                <li>Download <code>FNaE_U.zip</code> using the button above.</li>
+                <li>Download <code>FNaE_U.zip</code> using the Wii U button above.</li>
                 <li>Extract the zip on your PC. You should see a <code>wiiu</code> folder.</li>
                 <li><strong>Extract the wiiu folder to the root of your SD card.</strong> If your SD already has a <code>wiiu</code> folder, merge them (copy the new files inside, don't replace the whole folder).</li>
                 <li>Safely eject the SD card and put it back in your Wii U.</li>
@@ -250,14 +250,13 @@
         </div>
 
         <div class="guide-section">
-            <h2>💻 Option B — Cemu Emulator (PC)</h2>
+            <h2>💻 Option B — PC (Cemu Emulator)</h2>
             <p style="text-align:left;">Requirements: Cemu 2.x or newer on Windows / Linux.</p>
             <ol>
-                <li>Download and extract <code>FNaE_U.zip</code>.</li>
-                <li>Find the <code>.wuhb</code> file inside.</li>
+                <li>Download <code>FNaE_U.wuhb</code> using the PC button above.</li>
                 <li><strong>Take the .wuhb and place it in your Cemu game directory</strong> (for example, a folder you use for Wii U games/ROMs).</li>
                 <li>Open Cemu, go to <code>Options &gt; General settings &gt; Game paths</code> and add that folder if you haven't already, then click <code>Refresh</code>.</li>
-                <li>Double-click <strong>Five Nights at Edward's</strong> in your game list to play.</li>
+                <li>Double-click <strong>Five Nights at Edward's U</strong> in your game list to play.</li>
                 <li>If controls feel wrong, check <code>Options &gt; Input settings</code> and configure the Wii U GamePad.</li>
             </ol>
         </div>
@@ -286,6 +285,9 @@
         const wiiUVersion = "1.0.0";
 
         document.getElementById("wiiUVersionText").textContent =
+            `Version ${wiiUVersion}`;
+
+        document.getElementById("wiiUCemuVersionText").textContent =
             `Version ${wiiUVersion}`;
 
     </script>
