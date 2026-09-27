@@ -242,15 +242,23 @@
 
         // ==========================================
         // VERSION NUMBERS
+        // Each device has its own version.
+        // Bump only the device(s) you updated.
         // ==========================================
 
-        // Windows / main version
+        // Windows (.exe)
         const windowsVersion = "1.0.0";
 
-        // Web, Android, iOS, Wii U, etc.
-        const otherVersion = "1.0.0";
+        // Web (play.html)
+        const webVersion = "1.0.0";
 
-        // Wii U homebrew build (FNaE_U.zip)
+        // Android (.apk)
+        const androidVersion = "1.0.0";
+
+        // iOS (.ipa)
+        const iosVersion = "1.0.0";
+
+        // Wii U homebrew build (FNaE_U.zip / FNaE_U.wuhb)
         const wiiUVersion = "1.0.0";
 
 
@@ -258,23 +266,18 @@
         // SHOW VERSION UNDER EACH BUTTON
         // ==========================================
 
-        // Play.html is always the web/non-Windows version
         document.getElementById("playVersion").textContent =
-            `Version ${otherVersion}`;
+            `Version ${webVersion}`;
 
-        // Windows gets the main version
         document.getElementById("windowsVersionText").textContent =
             `Version ${windowsVersion}`;
 
-        // Android uses the other version
         document.getElementById("androidVersionText").textContent =
-            `Version ${otherVersion}`;
+            `Version ${androidVersion}`;
 
-        // iOS uses the other version
         document.getElementById("iosVersionText").textContent =
-            `Version ${otherVersion}`;
+            `Version ${iosVersion}`;
 
-        // Wii U uses its own version (FNaE_U.zip)
         document.getElementById("wiiUVersionText").textContent =
             `Version ${wiiUVersion}`;
 
@@ -292,26 +295,57 @@
 
 
         // ==========================================
-        // FOOTER VERSION
-        // Shows the version relevant to the device
+        // PER-DEVICE VERSION CHECK
+        // Compares this device's version against
+        // the latest version across all devices.
         // ==========================================
 
-        const deviceVersion = isWindows
-            ? windowsVersion
-            : otherVersion;
+        function compareVersions(a, b) {
+            const pa = a.split('.').map(Number);
+            const pb = b.split('.').map(Number);
+            const len = Math.max(pa.length, pb.length);
+            for (let i = 0; i < len; i++) {
+                const na = pa[i] || 0;
+                const nb = pb[i] || 0;
+                if (na > nb) return 1;
+                if (na < nb) return -1;
+            }
+            return 0;
+        }
+
+        // Web version is display-only, not checked.
+        const allVersions = [
+            windowsVersion,
+            androidVersion,
+            iosVersion,
+            wiiUVersion
+        ];
+
+        const latestVersion = allVersions.reduce((latest, v) =>
+            compareVersions(v, latest) > 0 ? v : latest
+        , allVersions[0]);
+
+        // Version relevant to the current device.
+        // Web / unknown devices are not checked.
+        let deviceVersion = null;
+        if (isAndroid) deviceVersion = androidVersion;
+        else if (isIOS) deviceVersion = iosVersion;
+        else if (isWiiU) deviceVersion = wiiUVersion;
+        else if (isWindows) deviceVersion = windowsVersion;
 
 
         // ==========================================
         // OUTDATED DEVICE WARNING
         //
-        // Shows on non-Windows devices when their
-        // version is behind the Windows version.
+        // Shows when this device's version is behind
+        // the latest version of any checked device.
+        // Web version is excluded from the check.
         // ==========================================
 
         const updateWarning =
             document.getElementById("updateWarning");
 
-        if (!isWindows && otherVersion !== windowsVersion) {
+        if (deviceVersion !== null && compareVersions(deviceVersion, latestVersion) < 0) {
 
             updateWarning.style.display = "block";
 
