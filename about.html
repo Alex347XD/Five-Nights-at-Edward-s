@@ -23,8 +23,10 @@
             color: #f2f2f2;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
+            padding: 70px 15px 40px;
+            box-sizing: border-box;
         }
 
         .container {
@@ -32,10 +34,11 @@
             border: 2px solid #5b1b1b;
             border-radius: 12px;
             padding: 40px;
-            max-width: 600px;
-            width: 90%;
+            max-width: 650px;
+            width: 100%;
             box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
             text-align: center;
+            box-sizing: border-box;
         }
 
         h1 {
@@ -164,6 +167,16 @@
             text-align: center;
             font-size: 0.8rem;
             color: #888;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 25px 20px; }
+            h1 { font-size: 1.7rem; }
+            .top-button { font-size: 0.75rem; padding: 7px 9px; }
+            .logs-button { left: 8px; }
+            .home-button { left: 60px; }
+            .play-button { left: 118px; }
+            .guide-button { left: 176px; }
         }
 
     </style>
