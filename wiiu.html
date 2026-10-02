@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Five Nights at Edward's - Wii U</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="icon" sizes="32x32" href="favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png" />
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: radial-gradient(circle at top, #1a1a1a, #000);
+            color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 70px 15px 40px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background: rgba(20, 20, 20, 0.95);
+            border: 2px solid #5b1b1b;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 650px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            margin-top: 30px;
+            font-size: 1.3rem;
+            color: #ffb3b3;
+            text-align: left;
+        }
+
+        p, li {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        p {
+            text-align: center;
+        }
+
+        .guide-section {
+            text-align: left;
+            background: rgba(40, 0, 0, 0.4);
+            border: 1px solid #5b1b1b;
+            border-radius: 8px;
+            padding: 15px 18px;
+            margin-top: 15px;
+        }
+
+        .guide-section h2 {
+            margin-top: 0;
+        }
+
+        .guide-section ol, .guide-section ul {
+            margin: 10px 0 0 20px;
+            padding: 0;
+        }
+
+        .guide-section li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background: #000;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 1px 6px;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .top-button {
+            position: fixed;
+            top: 15px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: #fff;
+            background: #222;
+            border: 1px solid #555;
+            border-radius: 6px;
+            z-index: 1000;
+            transition: background 0.15s ease, transform 0.15s ease;
+        }
+
+        .top-button:hover {
+            background: #b00000;
+            transform: translateY(-1px);
+        }
+
+        .logs-button { left: 15px; }
+        .home-button { left: 75px; }
+        .play-button { left: 140px; }
+        .about-button { left: 200px; }
+        .guide-button { left: 265px; }
+
+        a.button {
+            display: block;
+            padding: 14px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .download-main {
+            background: #b00000;
+            color: #fff;
+            margin-top: 20px;
+        }
+
+        .download-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+        }
+
+        .download-alt {
+            background: #b00000;
+            color: #fff;
+            margin-top: 12px;
+        }
+
+        .download-alt:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+        }
+
+        .versionText {
+            display: block;
+            font-size: 10px;
+            color: #eee;
+            font-style: italic;
+            margin-top: 2px;
+            font-weight: normal;
+        }
+
+        footer {
+            margin-top: 25px;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .return-button {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: #fff;
+            background: #222;
+            border: 1px solid #555;
+            border-radius: 8px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .return-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 25px 20px; }
+            h1 { font-size: 1.7rem; }
+            .top-button { font-size: 0.75rem; padding: 7px 9px; }
+            .logs-button { left: 8px; }
+            .home-button { left: 60px; }
+            .play-button { left: 118px; }
+            .about-button { left: 168px; }
+            .guide-button { left: 228px; }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <a href="logs.html" class="top-button logs-button">Logs</a>
+    <a href="index.html" class="top-button home-button">Home</a>
+    <a href="play.html" class="top-button play-button">Play</a>
+    <a href="about.html" class="top-button about-button">About</a>
+    <a href="guide.html" class="top-button guide-button">Guide</a>
+
+    <div class="container">
+
+        <h1>Five Nights at Edward's — Wii U Port</h1>
+
+        <p>
+            Download the Wii U build and follow the guide below to run it on a modded Wii
+            U with <strong>Aroma</strong>, or on PC with the <strong>Cemu</strong> emulator.
+        </p>
+
+        <a class="button download-main"
+           href="downloads/FNaE_U.zip"
+           download
+           id="wiiUDownloadButton">
+            🎮 Download for Wii U (Aroma Homebrew)
+            <span class="versionText" id="wiiUVersionText"></span>
+        </a>
+
+        <a class="button download-alt"
+           href="downloads/FNaE_U.wuhb"
+           download
+           id="wiiUCemuDownloadButton">
+            💻 Download for PC (Cemu Emulator)
+            <span class="versionText" id="wiiUCemuVersionText"></span>
+        </a>
+
+        <div class="guide-section">
+            <h2>🍥 Option A — Real Wii U (Aroma Homebrew)</h2>
+            <p style="text-align:left;">Requirements: a modded Wii U running Aroma, and an SD card (FAT32).</p>
+            <ol>
+                <li>Download <code>FNaE_U.zip</code> using the Wii U button above.</li>
+                <li>Extract the zip on your PC. You should see a <code>wiiu</code> folder.</li>
+                <li><strong>Extract the wiiu folder to the root of your SD card.</strong> If your SD already has a <code>wiiu</code> folder, merge them (copy the new files inside, don't replace the whole folder).</li>
+                <li>Safely eject the SD card and put it back in your Wii U.</li>
+                <li>Boot the Wii U into <strong>Aroma</strong>.</li>
+                <li>Open the Wii U Menu and launch <strong>Five Nights at Edward's U</strong>.</li>
+            </ol>
+        </div>
+
+        <div class="guide-section">
+            <h2>💻 Option B — PC (Cemu Emulator)</h2>
+            <p style="text-align:left;">Requirements: Cemu 2.x or newer on Windows / Linux.</p>
+            <ol>
+                <li>Download <code>FNaE_U.wuhb</code> using the PC button above.</li>
+                <li><strong>Take the .wuhb and place it in your Cemu game directory</strong> (for example, a folder you use for Wii U games/ROMs).</li>
+                <li>Open Cemu, go to <code>Options &gt; General settings &gt; Game paths</code> and add that folder if you haven't already, then click <code>Refresh</code>.</li>
+                <li>Double-click <strong>Five Nights at Edward's U</strong> in your game list to play.</li>
+                <li>If controls feel wrong, check <code>Options &gt; Input settings</code> and configure the Wii U GamePad.</li>
+            </ol>
+        </div>
+
+        <div class="guide-section">
+            <h2>❓ Troubleshooting</h2>
+            <ul>
+                <li><strong>Game doesn't show up on Wii U:</strong> make sure the files ended up at <code>sd:/wiiu/...</code> (SD root, not inside another folder) and you booted Aroma, not Tiramisu/Minimal.</li>
+                <li><strong>Game doesn't show up in Cemu:</strong> make sure the <code>.wuhb</code> is in a scanned game path, then right-click the game list and hit Refresh.</li>
+                <li><strong>Black screen / crash:</strong> update Cemu and your GPU drivers, and re-download a fresh copy of <code>FNaE_U.wuhb</code>.</li>
+            </ul>
+        </div>
+
+        <a href="index.html" class="return-button">⬅ Back to Home</a>
+
+        <footer>
+            © 2024-2026 Edward's Province • Fan-made FNaF game
+            <br>
+            Original Five Nights at Freddy's by Scott Cawthon
+        </footer>
+
+    </div>
+
+    <script>
+
+        const wiiUVersion = "1.0.0";
+
+        document.getElementById("wiiUVersionText").textContent =
+            `Version ${wiiUVersion}`;
+
+        document.getElementById("wiiUCemuVersionText").textContent =
+            `Version ${wiiUVersion}`;
+
+    </script>
+
+</body>
+
+</html>
