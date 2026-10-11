@@ -258,8 +258,8 @@
         // iOS (.ipa)
         const iosVersion = "1.0.0";
 
-        // Wii U homebrew build (FNaE_U.zip / FNaE_U.wuhb)
-        const wiiUVersion = "1.0.0";
+        // Wii U port version
+        const wiiUVersion = "V0.9.2";
 
 
         // ==========================================
@@ -369,6 +369,9 @@
 
                     (isIOS &&
                         btn.textContent.includes('iOS')) ||
+
+                    (isWiiU &&
+                        btn.textContent.includes('Wii U')) ||
 
                     (isWiiU &&
                         btn.textContent.includes('Wii U')) ||

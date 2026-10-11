@@ -142,17 +142,6 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
         }
 
-        .download-alt {
-            background: #b00000;
-            color: #fff;
-            margin-top: 12px;
-        }
-
-        .download-alt:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
-        }
-
         .versionText {
             display: block;
             font-size: 10px;
@@ -220,28 +209,25 @@
         </p>
 
         <a class="button download-main"
-           href="downloads/FNaE_U.zip"
+           href="downloads/FNaE_U.wuhb"
            download
            id="wiiUDownloadButton">
-            🎮 Download for Wii U (Aroma Homebrew)
+            🎮 Download for Wii U
             <span class="versionText" id="wiiUVersionText"></span>
         </a>
 
-        <a class="button download-alt"
-           href="downloads/FNaE_U.wuhb"
-           download
-           id="wiiUCemuDownloadButton">
-            💻 Download for PC (Cemu Emulator)
-            <span class="versionText" id="wiiUCemuVersionText"></span>
-        </a>
+        <div class="guide-section">
+            <h2>📦 Also on the Homebrew App Store</h2>
+            <p style="text-align:left;">You can also download <strong>Five Nights at Edward's U</strong> directly from the <strong>Homebrew App Store</strong> on your Wii U — just open the App Store, search for the game, and install it, no manual file copying needed.</p>
+        </div>
 
         <div class="guide-section">
             <h2>🍥 Option A — Real Wii U (Aroma Homebrew)</h2>
             <p style="text-align:left;">Requirements: a modded Wii U running Aroma, and an SD card (FAT32).</p>
             <ol>
-                <li>Download <code>FNaE_U.zip</code> using the Wii U button above.</li>
-                <li>Extract the zip on your PC. You should see a <code>wiiu</code> folder.</li>
-                <li><strong>Extract the wiiu folder to the root of your SD card.</strong> If your SD already has a <code>wiiu</code> folder, merge them (copy the new files inside, don't replace the whole folder).</li>
+                <li>Download <code>FNaE_U.wuhb</code> using the download button above.</li>
+                <li>On your SD card, create the folder <code>wiiu/apps/FNaE_U</code> if it doesn't exist yet.</li>
+                <li><strong>Copy <code>FNaE_U.wuhb</code> into that folder,</strong> so the final path is <code>sd:/wiiu/apps/FNaE_U/FNaE_U.wuhb</code>.</li>
                 <li>Safely eject the SD card and put it back in your Wii U.</li>
                 <li>Boot the Wii U into <strong>Aroma</strong>.</li>
                 <li>Open the Wii U Menu and launch <strong>Five Nights at Edward's U</strong>.</li>
@@ -252,7 +238,7 @@
             <h2>💻 Option B — PC (Cemu Emulator)</h2>
             <p style="text-align:left;">Requirements: Cemu 2.x or newer on Windows / Linux.</p>
             <ol>
-                <li>Download <code>FNaE_U.wuhb</code> using the PC button above.</li>
+                <li>Download <code>FNaE_U.wuhb</code> using the download button above.</li>
                 <li><strong>Take the .wuhb and place it in your Cemu game directory</strong> (for example, a folder you use for Wii U games/ROMs).</li>
                 <li>Open Cemu, go to <code>Options &gt; General settings &gt; Game paths</code> and add that folder if you haven't already, then click <code>Refresh</code>.</li>
                 <li>Double-click <strong>Five Nights at Edward's U</strong> in your game list to play.</li>
@@ -263,7 +249,7 @@
         <div class="guide-section">
             <h2>❓ Troubleshooting</h2>
             <ul>
-                <li><strong>Game doesn't show up on Wii U:</strong> make sure the files ended up at <code>sd:/wiiu/...</code> (SD root, not inside another folder) and you booted Aroma, not Tiramisu/Minimal.</li>
+                <li><strong>Game doesn't show up on Wii U:</strong> make sure the file is at <code>sd:/wiiu/apps/FNaE_U/FNaE_U.wuhb</code> and you booted Aroma, not Tiramisu/Minimal.</li>
                 <li><strong>Game doesn't show up in Cemu:</strong> make sure the <code>.wuhb</code> is in a scanned game path, then right-click the game list and hit Refresh.</li>
                 <li><strong>Black screen / crash:</strong> update Cemu and your GPU drivers, and re-download a fresh copy of <code>FNaE_U.wuhb</code>.</li>
             </ul>
@@ -281,12 +267,9 @@
 
     <script>
 
-        const wiiUVersion = "1.0.0";
+        const wiiUVersion = "V0.9.2";
 
         document.getElementById("wiiUVersionText").textContent =
-            `Version ${wiiUVersion}`;
-
-        document.getElementById("wiiUCemuVersionText").textContent =
             `Version ${wiiUVersion}`;
 
     </script>
