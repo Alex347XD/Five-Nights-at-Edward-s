@@ -2,7 +2,7 @@ Five Nights at Edward's is a fan-made survival horror game inspired by the mecha
 
 This project focuses on our own characters (and Roblox UGC Series'), Edward the Devil, NomNom the Dino, Big the Boulder, and Smiley the Clown.
 
-The game is actively developed and updated with new features, balance changes, and polishes over time.
+The game is cureently finished with no major updates planned but balance changes and polishes may occur over time if needed.
 
 This is a fan-made project and is not affiliated with or endorsed by Scott Cawthon or the official Five Nights at Freddy's franchise.
 
